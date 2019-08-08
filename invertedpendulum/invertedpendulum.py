@@ -41,7 +41,7 @@ class InvertedPendulum():
 
     @property
     def MOI(self):
-        return (1.0/3.0) * self._massPendulum * (self._totalLength**2.0)
+        return (1.0/12.0) * self._massPendulum * (self._totalLength**2.0)
 
     @property
     def _beta(self):
@@ -49,7 +49,7 @@ class InvertedPendulum():
 
     @property
     def _denominator(self):
-        return self._massCart + self._massPendulum * (1 - self._lengthCM * self._beta)
+        return self.massSystem - (self._beta * self._massPendulum * self._lengthCM)
 
     @massCart.setter
     def massCart(self, value):
@@ -81,36 +81,36 @@ class InvertedPendulum():
         stateVector, controlInput = value
 
         # Define short hand for variables
-        x1 = stateVector[0] # theta
+        x1 = stateVector[0] # theta (rad)
         x2 = stateVector[1] # x
-        x3 = stateVector[2] # theta dot
+        x3 = stateVector[2] # theta dot (rad)
         x4 = stateVector[3] # x dot
         u = controlInput
 
         # System of nonlinear first order differential equations
-        nonlinearDenominator = self._massCart + self._massPendulum * (1 - self._lengthCM * self._beta * np.cos(x1)**2)
+        nonlinearDenominator = self.massSystem - ( self._beta * self._massPendulum * self._lengthCM * (np.cos(x1)**2) )
 
         x1Dot = x3
         x2Dot = x4
-        x3Dot = (self._beta/nonlinearDenominator) * ( (_g * self.massSystem * np.sin(x1)) + (u - self._frictionCoeff * x4) * np.cos(x1) - (self._massPendulum * self._lengthCM * (x3**2) * np.sin(x1) * np.cos(x1)) )
-        x4Dot = (1/nonlinearDenominator) * (u - (self._frictionCoeff * x4) + (self._massPendulum * self._lengthCM * _g * self._beta * np.sin(x1) * np.cos(x1)) - (self._massPendulum * self._lengthCM * (x3**2) * np.sin(x1)) )
+        x3Dot = (self._beta/nonlinearDenominator) * ( (_g * self.massSystem * np.sin(x1)) + (self._frictionCoeff * x4 - u) * np.cos(x1) - (self._massPendulum * self._lengthCM * (x3**2) * np.sin(x1) * np.cos(x1)) )
+        x4Dot = (1/nonlinearDenominator) * ( u - (self._frictionCoeff * x4) + self._massPendulum * self._lengthCM * np.sin(x1)*( (x3**2) - (_g * self._beta * np.cos(x1)) ))
 
         vectorField = [x1Dot, x2Dot, x3Dot, x4Dot]
 
         self._nonlinearModel = vectorField
 
     @property
-    def stateSpaceModel(self):
-        return self._stateSpaceModel
+    def stateSpace(self):
+        return self._stateSpace
     
-    @stateSpaceModel.setter
-    def stateSpaceModel(self, equilibriumPoint):
+    @stateSpace.setter
+    def stateSpace(self, equilibriumPoint):
         A31 = _g * self._beta * self.massSystem * equilibriumPoint/self._denominator
-        A34 = -self._frictionCoeff * self._beta * equilibriumPoint/self._denominator
-        A41 = self._massPendulum * _g * self._totalLength * self._beta/self._denominator
+        A34 = self._frictionCoeff * self._beta * equilibriumPoint/self._denominator
+        A41 = -self._massPendulum * _g * self._lengthCM * self._beta/self._denominator
         A44 = -self._frictionCoeff/self._denominator
 
-        B31 = self._beta * equilibriumPoint/self._denominator
+        B31 = -self._beta * equilibriumPoint/self._denominator
         B41 = 1/self._denominator
 
         A = [ [0, 0, 1, 0], [0, 0, 0, 1], [A31, 0, 0, A34], [A41, 0, 0, A44] ]
@@ -120,4 +120,4 @@ class InvertedPendulum():
 
         model = ss(A, B, C, D)
 
-        self._stateSpaceModel = model
+        self._stateSpace = model
