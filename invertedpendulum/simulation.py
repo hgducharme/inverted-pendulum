@@ -50,10 +50,6 @@ plt.axhline(0, xmin=-9, xmax=9, linewidth="0.75", color='k')
 left_constraint = plt.vlines(-linear_rails_length/2.0, ymin=-1, ymax=1, linestyle="dashdot", color='r')
 right_constraint = plt.vlines(linear_rails_length/2.0, ymin=-1, ymax=1, linestyle="dashdot", color='r')
 
-# left_constraint.set_xdata( [-linear_rails_length/2.0, -linear_rails_length/2.0] )
-# left_constraint.set_ydata( [-0.1, 0.1] )
-# right_constraint.set_ydata( [-0.1, 0.1] )
-
 ax.set(xlim=(-20, 20), ylim=(-20, 20))
 
 # Create the cart and pendulum shapes
