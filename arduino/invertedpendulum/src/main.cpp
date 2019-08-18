@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <NewPing.h>
 
 // L298N motor driver
@@ -24,13 +25,10 @@ int direction = 0;
 int speed = 0;
 int buttonState = 0;
 
-void setup() {
+void setup()
+{
 
   Serial.begin(9600);
-
-  pinMode(IN1, OUTPUT);
-  pinMode(IN2, OUTPUT);
-  pinMode(ENA, OUTPUT);
 
   pinMode(ultrasonicEcho, INPUT);
   pinMode(ultrasonicTrigger, OUTPUT);
@@ -43,10 +41,10 @@ void setup() {
 
   attachInterrupt(digitalPinToInterrupt(rotaryEncoderPhaseA), readRotaryEncoder, CHANGE);
   //attachInterrupt(digitalPinToInterrupt(rotaryEncoderPhaseB), readRotaryEncoder, CHANGE);
-
 }
 
-void loop() {
+void loop()
+{
 
   // Read in values
   direction = readJoystick();
@@ -62,37 +60,20 @@ void loop() {
   Serial.print(" in");
   Serial.println();
 
-  double duration = sonar.ping_median(3)*1.0/2.0;
-  
-  
-  
-//  double speedOfSoundEnglish = 1133.0; // ft/s
-//  double speedOfSoundMetric = 343.0; // m/s
-//
-//  double distanceIn = speedOfSoundEnglish*duration
-//  Serial.print(" in");
-//  Serial.println();
+  double duration = sonar.ping_median(3) * 1.0 / 2.0;
+
+  //  double speedOfSoundEnglish = 1133.0; // ft/s
+  //  double speedOfSoundMetric = 343.0; // m/s
+  //
+  //  double distanceIn = speedOfSoundEnglish*duration
+  //  Serial.print(" in");
+  //  Serial.println();
 
   moveCart(speed, direction);
-  if (buttonState == 1) {
+  if (buttonState == 1)
+  {
     controlCartBasedOnAngle(rotaryEncoderAngle);
   }
-
-}
-
-int readJoystick() {
-
-  return analogRead(joystick);
-
-}
-
-int readPotentiometer() {
-
-  speed = analogRead(pot);
-  speed = map(speed, 0, 1023, 255, 0);
-
-  return speed;
-
 }
 
 void moveCart(int speed, int direction) {
@@ -124,58 +105,82 @@ void moveCart(int speed, int direction) {
 
 }
 
-void readRotaryEncoder() {
+int readJoystick()
+{
+
+  return analogRead(joystick);
+}
+
+int readPotentiometer()
+{
+
+  speed = analogRead(pot);
+  speed = map(speed, 0, 1023, 255, 0);
+
+  return speed;
+}
+
+void readRotaryEncoder()
+{
 
   // If they're the same, then we're moving clockwise
-  if (digitalRead(rotaryEncoderPhaseA) == digitalRead(rotaryEncoderPhaseB)) {
+  if (digitalRead(rotaryEncoderPhaseA) == digitalRead(rotaryEncoderPhaseB))
+  {
     rotaryEncoderAngle--;
   }
 
   // If they're not the same, then we're moving counter clockwise
-  else {
+  else
+  {
     rotaryEncoderAngle++;
   }
 
   Serial.println(rotaryEncoderAngle);
-
 }
 
-void readButton() {
+void readButton()
+{
 
   int buttonPressed = digitalRead(button);
 
   // If the button is pressed then toggle the button state
-  if (buttonPressed == 0) {
+  if (buttonPressed == 0)
+  {
 
     // If the state is on, turn it off
-    if (buttonState == 1) {
+    if (buttonState == 1)
+    {
       Serial.println("State: OFF");
       buttonState = 0;
     }
 
     // Else, turn it on
-    else {
+    else
+    {
       Serial.println("State: ON");
       buttonState = 1;
     }
 
     delay(200);
   }
-
 }
 
-void controlCartBasedOnAngle(int angle) {
+void controlCartBasedOnAngle(int angle)
+{
 
   // If the angle is positive, slowly move the cart to the right
-  if (angle > 50) {
+  if (angle > 50)
+  {
     moveCart(80, 600);
   }
 
   // If the angle is negative, slowly move the cart to the left
-  else if (angle < -50) {
+  else if (angle < -50)
+  {
     moveCart(80, 400);
   }
 
-
-  else {}
+  else
+  {
+  }
 }
