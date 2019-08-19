@@ -55,7 +55,7 @@ def get_transfer_functions(statespace_model):
 if __name__ == "__main__":
 
     # Create an inverted pendulum system
-    sys = InvertedPendulum(massCart=0.3, massPendulum=0.125, lengthCM=0.15, totalLength=0.30, frictionCoeff=2.5, cartWidth=0.0635, cartHeight=0.053975, railsLength = .45)
+    sys = InvertedPendulum(massCart=0.27, massPendulum=0.125, lengthCM=0.15, totalLength=0.30, frictionCoeff=2.5, cartWidth=0.0635, cartHeight=0.053975, railsLength = .45)
     sys.controlLaw = 0
 
     # Solve and plot the non-linear dynamics for no control input
@@ -92,11 +92,11 @@ if __name__ == "__main__":
         'cart_dot': None
     }
     max_desired_values = {
-        'theta': np.deg2rad(30),
+        'theta': np.deg2rad(20),
         'cart': 0.19,
         'theta_dot': None,
         'cart_dot': None,
-        'control_input': 18
+        'control_input': 10
     }
 
     # Build the Q and R matricies
