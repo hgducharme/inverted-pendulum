@@ -180,10 +180,11 @@ class InvertedPendulum:
 
             # Define and caclulate cart parameters
             cart_bottom_left_x_position = cart_position[iter] - (self.cartWidth / 2.0)
-            cart_center = [cart_bottom_left_x_position + (0.5 * self.cartWidth), 0.5 * self.cartHeight]
+            cart_center = [cart_position[iter], 0.5 * self.cartHeight]
 
             # Define and calculate pendulum paramters
             angle = theta[iter]
+            print(np.rad2deg(angle))
             pendulum_end_point = [
                 cart_center[0] - self.totalLength * np.sin(angle),
                 self.totalLength * np.cos(angle),
