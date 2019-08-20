@@ -1,6 +1,7 @@
 # personal
 .DS_Store
 .vscode
+*.code-workspace
 
 #############################
 #         PlatformIO        #
