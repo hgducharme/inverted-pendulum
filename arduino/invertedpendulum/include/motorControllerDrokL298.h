@@ -15,8 +15,6 @@ void moveCart(char direction, int speed)
 
     else
     {
-        analogWrite(ENA, speed);
-
         // Rotate motor clockwise
         if (direction == 'L')
         {
@@ -35,12 +33,15 @@ void moveCart(char direction, int speed)
         {
             brake();
         }
+
+        analogWrite(ENA, speed);
+
     }
 }
 
 void brake() {
-    analogWrite(ENA, 0);
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, LOW);
-    delay(100);
+    analogWrite(ENA, 0);
+    delay(130);
 }
