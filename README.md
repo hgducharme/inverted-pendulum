@@ -28,4 +28,6 @@ This project might be trivial to some people, but it sure as hell wasn't for me,
 
 10. Next, I focused on how to mount the printer motor on this 2x4. I first thought of mounting it on the side of the 2x4, but for some reason I decided to put it in the center of the 2x4. In other words, this required drilling a hole through the core of the 2x4 so the motor could come from underneath and pop out on top of the 2x4, where a piece of metal bigger than the hole would screw into the motor and hold the motor flush with the top of the 2x4. I think I spent a whole night working on this.
 
-11. I then started playing around with an ultrasonic sensor and how well it measured position. It sucked. This made me realize I needed a better way to measure position.
+11. I then started looking for timing belts, timing pulleys, and idler pulleys that would work for my design. What was going to go on the opposite side of the motor? I had no idea, but something had to go there. After a lot of research it seemed the most common and reliable type of timing belt used in hobby 3D printers (ie. converting rotational motion to linear motion) was the GT2 type. 
+
+12. I then started playing around with an ultrasonic sensor and how well it measured position. It sucked. This made me realize I needed a better way to measure position.
