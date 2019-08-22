@@ -2,6 +2,8 @@
 
 My inverted pendulum project.
 
+<br>
+
 # Timeline
 
 This project might be trivial to some people, but it sure as hell wasn't for me, so I'm going to document my experience and lessons learned below.
@@ -34,6 +36,10 @@ This project might be trivial to some people, but it sure as hell wasn't for me,
 
 13. I then started playing around with an ultrasonic sensor and how well it measured position. It sucked. This made me realize I needed a better way to measure position. I got some feedback online and chose to use another quadrature rotary encoder to measure the rotation of the belt which can be used to calculate the linear position of the cart. 
 
-14 The new motor, timing belt, and pulleys came in the mail. The new motor was about 2x the size of the old motor, which was something I didn't anticipate. This means the hole in the center of the 2x4 that originally was going to house the motor is no longer viable--this motor was simply too big. I then changed the design to have the motor be mounted to the end of the 2x4 with an angle bracket, and have the rotary encoder sit in the hole the motor originally was to sit in.
+14. The new motor, timing belt, and pulleys came in the mail. The new motor was about 2x the size of the old motor, which was something I didn't anticipate. This means the hole in the center of the 2x4 that originally was going to house the motor is no longer viable--this motor was simply too big. I then changed the design to have the motor be mounted to the end of the 2x4 with an angle bracket, and have the rotary encoder sit in the hole the motor originally was to sit in.
 
-15. 
+15. I spent the rest of the next day machining a rectangular piece of sheet metal to hold the rotary encoder flush with the top of the 2x4. This meant drilling a 3/4" hole for the center of the encoder, grinding down the screws and transferring the holes onto the piece of sheet metal, and then cutting the sheet metal to size. This time, however, I made sure to harden the screws after grinding them down, that way when I was unscrewing them with pliers they wouldn't crush and get stuck like last time. To harden them, I took a blowtorch, heated them up for about 45 seconds, and stuck them in cold water. I continued making this contraption and I was about 90% done when the saw blade caught the piece of sheet metal and destroyed it. Hmmm, 3 hours down the drain. I laughed at the fact that nothing ever goes according to plan and then had to muster the discipline to start over. Once again, I cut the sheet metal, drilled the hole for the center of the enocder, grided the screws, hardened them, transferred the holes, and drilled out the holes. 
+
+15. I spent another day thinking about this design decision, and when I was playing around with how everything would be setup, I realized the belt would have a slight twist in it. After tinkering a bit more, I finally decided to just mount the motor and the rotary encoder horizontally on either side of the linear rails system. This was the best design in my opinion. I didn't need to worry about parts being underneath the 2x4 (everything sat on top), it was KISS, and there would be no twist in the belt. However, it would require more machining to make the rotary encoder work with the bracket I chose. No big deal. After yesterday, I felt super comfortable doing this.
+
+16. I bought another angle bracket and machined it for the rotary encoder just like the previous 3 times. Turns out, I used the 
