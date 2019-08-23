@@ -37,7 +37,23 @@ class InvertedPendulum:
         self.railsLength = railsLength
 
     def __str__(self):
-        return "System"
+        
+        dictionary = {
+            'massCart': self.massCart,
+            'massPendulum': self.massPendulum,
+            'lengthCM': self.lengthCM,
+            'totalLength': self.totalLength,
+            'frictionCoeff': self.frictionCoeff,
+            'controlLaw': self.controlLaw,
+            'cartWidth': self.cartWidth,
+            'cartHeight': self.cartHeight,
+            'railsLength': self.railsLength,
+        }
+
+        return f"{dictionary}"
+
+    def __repr__(self):
+        return self
 
     @property
     def massSystem(self):
@@ -184,7 +200,6 @@ class InvertedPendulum:
 
             # Define and calculate pendulum paramters
             angle = theta[iter]
-            print(np.rad2deg(angle))
             pendulum_end_point = [
                 cart_center[0] - self.totalLength * np.sin(angle),
                 self.totalLength * np.cos(angle),

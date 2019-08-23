@@ -15,15 +15,15 @@ void moveCart(char direction, int speed)
 
     else
     {
-        // Rotate motor clockwise
-        if (direction == 'L')
+        // Rotate motor counter-clockwise
+        if (direction == 'R')
         {
             digitalWrite(IN1, LOW);
             digitalWrite(IN2, HIGH);
         }
 
-        // Rotate motor counter-clockwise
-        else if (direction == 'R')
+        // Rotate motor clockwise
+        else if (direction == 'L')
         {
             digitalWrite(IN1, HIGH);
             digitalWrite(IN2, LOW);

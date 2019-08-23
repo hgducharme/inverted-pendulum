@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <Encoder.h>
 #include "motorControllerDrokL298.h"
+#include "utils2.h"
 
 // Initialize encoders
 #define cartEncoderPhaseA 3
@@ -12,28 +13,11 @@
 Encoder cartEncoder(cartEncoderPhaseA, cartEncoderPhaseB);
 Encoder pendulumEncoder(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
 
-unsigned long timeframe = 5000;
+// Initialize named constants
+const unsigned long TIMEFRAME = 100;
+
+// Initialize variables
 unsigned long previousMilliseconds = 0;
-
-void sendEncoderValuesToPython(long cartEncoderCount, long pendulumEncoderCount) {
-
-  float cartAngle;           // radians
-  float pendulumAngle;       // radians
-  float cartDistance;        // depends on units of idlerRadius
-  float idlerRadius = 0.189; // inches
-
-  // Calculate linear distance travelled by cart x = r * theta
-  cartAngle = (cartEncoderCount / 2400.0) * (360.0);
-  cartDistance = idlerRadius * cartAngle;
-
-  // Calculate pendulum angle
-  pendulumAngle = (pendulumEncoderCount / 2400.0) * (360.0);
-
-  Serial.print(cartAngle);
-  Serial.print(".");
-  Serial.print(pendulumAngle);
-  Serial.println();
-}
 
 void setup()
 {
@@ -51,7 +35,8 @@ void loop()
   long pendulumEncoderCount = pendulumEncoder.read();
   unsigned long currentMilliseconds = millis();
 
-  if ( (currentMilliseconds - previousMilliseconds) > timeframe ) {
+  // Send values to python every n milliseconds
+  if ( (currentMilliseconds - previousMilliseconds) > TIMEFRAME ) {
     sendEncoderValuesToPython(cartEncoderCount, pendulumEncoderCount);
     previousMilliseconds = millis();
   }
