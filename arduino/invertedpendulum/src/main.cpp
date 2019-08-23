@@ -1,8 +1,9 @@
 #define ENCODER_OPTIMIZE_INTERRUPTS
+
 #include <Arduino.h>
 #include <Encoder.h>
 #include "motorControllerDrokL298.h"
-#include "utils2.h"
+#include "pythonUtils.h"
 
 // Initialize encoders
 #define cartEncoderPhaseA 3
@@ -15,6 +16,7 @@ Encoder pendulumEncoder(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
 
 // Initialize named constants
 const unsigned long TIMEFRAME = 100;
+const double ENCODER_PPR = 2400.0;
 
 // Initialize variables
 unsigned long previousMilliseconds = 0;
@@ -31,14 +33,21 @@ void setup()
 
 void loop()
 {
+  unsigned long currentMilliseconds = millis();
   long cartEncoderCount = cartEncoder.read();
   long pendulumEncoderCount = pendulumEncoder.read();
-  unsigned long currentMilliseconds = millis();
 
   // Send values to python every n milliseconds
   if ( (currentMilliseconds - previousMilliseconds) > TIMEFRAME ) {
-    sendEncoderValuesToPython(cartEncoderCount, pendulumEncoderCount);
+
+    stateVector state;
+    state.pendulumAngle = encoderCountToAngleDegrees(pendulumEncoderCount, ENCODER_PPR);
+    state.cartPosition = encoderCountToCartPositionInches(cartEncoderCount, ENCODER_PPR);
+
+    sendStateVectorToPython(state);
+
     previousMilliseconds = millis();
+
   }
 
   // moveCart('R', 20);
