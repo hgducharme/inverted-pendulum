@@ -1,4 +1,5 @@
 import serial
+import numpy as np
 
 def _has_digits(string):
     return any(char.isdigit() for char in str(string))
@@ -13,26 +14,29 @@ def _check_for_overflowed_digits(string):
 
 def _compute_state_vector(data_string):
     data_array = data_string.split(",")
+    cart_velocity = (data_array[3] if '\r' not in data_array[3] else data_array[3].split('\r')[0])
     state_vector = {
-        'pendulum_angle': data_array[0],
-        'cart_position': data_array[1],
-        'pendulum_angular_velocity': data_array[2],
+        'pendulum_angle': float(data_array[0]),
+        'cart_position': float(data_array[1]),
+        'pendulum_angular_velocity': float(data_array[2]),
         # Sometimes the carriage return "\r" remains in the string, so get rid of it
-        'cart_velocity': (data_array[3] if '\r' not in data_array[3] else data_array[3].split('\r')[0])
+        'cart_velocity': float(cart_velocity)
     }
 
     return state_vector
 
 def _compute_input(state):
-    state_vector = [state['pendulum_angle'], state['cart_position'], state['pendulum_angular_velocity'], state['cart_velocity']]
+    state_vector = np.array([
+        [ state['pendulum_angle'] ],
+        [ state['cart_position'] ],
+        [ state['pendulum_angular_velocity'] ],
+        [ state['cart_velocity'] ]
+    ])
     gain_matrix = np.array([
-        [1000, 0, 0, 0],
-        [0, 10, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, 1],
+        [-98.93469078, -23.53755766, -15.49560488, -26.21828687]
     ])
 
-    control_input = -gain_matrix * state_vector
+    control_input = np.dot(gain_matrix, state_vector)
     return control_input
 
 class Arduino():
@@ -58,9 +62,9 @@ class Arduino():
 
                     # Parse data into state_vector and send control input using LQR
                     state_vector = _compute_state_vector(last_line_recieved)
-                    control_input = compute_input(state_vector)
-                    serial.write(str(control_input).encode())
-
+                    control_input = _compute_input(state_vector)
+                    print(control_input[0][0])
+                    self.serial.write(str(control_input).encode())
 
                     # Reset the variable
                     last_line_recieved = ""
