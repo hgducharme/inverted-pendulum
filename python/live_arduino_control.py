@@ -9,58 +9,47 @@ I'm calling it a night
 """
 
 # Define the serial port and baud rate.
-_BAUD_RATE = 115200
-
-arduino = serial.Serial("/dev/cu.usbmodem14101", 9400, timeout=0)
+_BAUD_RATE = 9400
+arduino = serial.Serial("/dev/cu.usbmodem14101", _BAUD_RATE, timeout=0)
 
 def has_numbers(string):
     return any(char.isdigit() for char in str(string))
 
 if __name__ == "__main__":
 
-    state_data = b""
+    last_line_recieved = ""
 
     while True:
-        line = arduino.readline()
+        serial_bytes = arduino.readline()
+        decoded_line = str(serial_bytes.decode('utf8'))
 
         # Read from buffer until we capture the whole line of data
-        if (len(line) != 0) and (b'\n' in line):
-
-            """
-            Maybe a more efficient way to do this is:
-            1) Check first character like below
-            2) Get all the overflowed digits (maybe store as byte right off the bat?)
-            3) somehow use python array module, and stuff from this page: https://docs.python.org/3.3/library/stdtypes.html#binary-sequence-types-bytes-bytearray-memoryview
-            4) Instead of converting list to bytes, convert with encoding or something? idk
-
-            I just realized I did all this work and didn't read the SO post at the top. Do that tomorrow.
-            I'm calling it a night
-            """
-
-            decoded_line = str(line.decode('utf8'))
+        if (len(serial_bytes) != 0) and (b'\n' in serial_bytes):
 
             # Check if the first character is a digit that overflowed from the previous line
             if decoded_line[0].isdigit():
-                overflowed_digits = [ int(char) for char in decoded_line.split() if char.isdigit() ]
-                state_data += bytes(overflowed_digits)
-            
-            print(state_data.decode())
+                overflowed_digits = [ char for char in decoded_line.split() if char.isdigit() ]
+                string_digits = ("").join(overflowed_digits)
+                last_line_recieved += string_digits
 
+            # Store the data now that we have the entire line
+            data = last_line_recieved.split(",")
+            state_vector = {
+                'pendulum_angle': data[0],
+                'cart_position': data[1],
+                'pendulum_angular_velocity': data[2],
 
-            # print(line)
-            # print(line)
-            # print(state_data)
-            # pendulum_angle = state_data.split(",")[0]
-            # cart_position = state_data.split(",")[1]
-            # pendulum_angular_velocity = state_data.split(",")[2]
-            # cart_velocity = state_data.split(",")[3]
+                # Sometimes the carriage return (\r) stays appended
+                'cart_velocity': (data[3] if '\r' not in data[3] else data[3].split('\r')[0])
+            }
 
-            # print(pendulum_angle, " -- ", cart_position, " -- ", pendulum_angular_velocity, " -- ", cart_velocity)
+            print(state_vector)
 
-            state_data = b""
+            # Reset the variable
+            last_line_recieved = ""
 
-        elif len(line) != 0:
-            state_data += line
+        elif len(serial_bytes) != 0:
+            last_line_recieved += decoded_line
 
         else:
             pass

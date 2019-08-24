@@ -17,14 +17,14 @@ float encoderCountToCartPositionInches(long cartEncoderCount, double encoderPPR)
 void sendStateVectorToPython(stateVector state);
 
 
-float encoderCountToAngleDegrees(long encoderCount, double encoderPPR)
+float encoderCountToAngleRadians(long encoderCount, double encoderPPR)
 {
-    return (encoderCount / encoderPPR) * (360.0);
+    return (encoderCount / encoderPPR) * (2.0 * PI);
 }
 
 float encoderCountToCartPositionInches(long cartEncoderCount, double encoderPPR) {
     float idlerPulleyRadius = 0.189;                                            // inches
-    float cartAngle = encoderCountToAngleDegrees(cartEncoderCount, encoderPPR); // degrees
+    float cartAngle = encoderCountToAngleRadians(cartEncoderCount, encoderPPR); // radians
     return idlerPulleyRadius * cartAngle;
 }
 
