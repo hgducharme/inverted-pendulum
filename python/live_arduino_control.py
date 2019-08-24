@@ -1,55 +1,80 @@
 import serial
 
-"""
-This script needs work. We need to find a way to read lines every 0.1 seconds.
-We also need to find a way to differentiate empty lines from lines with data we want.
-see: https://stackoverflow.com/questions/1093598/pyserial-how-to-read-the-last-line-sent-from-a-serial-device
-
-I'm calling it a night
-"""
-
-# Define the serial port and baud rate.
-_BAUD_RATE = 9400
-arduino = serial.Serial("/dev/cu.usbmodem14101", _BAUD_RATE, timeout=0)
-
-def has_numbers(string):
+def _has_digits(string):
     return any(char.isdigit() for char in str(string))
 
-if __name__ == "__main__":
+def _check_for_overflowed_digits(string):
+    if _has_digits(string):
+        overflowed_digits = [ char for char in string.split() if char.isdigit() ]
+        digits_to_string = ("").join(overflowed_digits)
+        return digits_to_string
+    else:
+        return None
 
-    last_line_recieved = ""
+def _compute_state_vector(data_string):
+    data_array = data_string.split(",")
+    state_vector = {
+        'pendulum_angle': data_array[0],
+        'cart_position': data_array[1],
+        'pendulum_angular_velocity': data_array[2],
+        # Sometimes the carriage return "\r" remains in the string, so get rid of it
+        'cart_velocity': (data_array[3] if '\r' not in data_array[3] else data_array[3].split('\r')[0])
+    }
 
-    while True:
-        serial_bytes = arduino.readline()
-        decoded_line = str(serial_bytes.decode('utf8'))
+    return state_vector
 
-        # Read from buffer until we capture the whole line of data
-        if (len(serial_bytes) != 0) and (b'\n' in serial_bytes):
+def _compute_input(state):
+    state_vector = [state['pendulum_angle'], state['cart_position'], state['pendulum_angular_velocity'], state['cart_velocity']]
+    gain_matrix = np.array([
+        [1000, 0, 0, 0],
+        [0, 10, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1],
+    ])
 
-            # Check if the first character is a digit that overflowed from the previous line
-            if decoded_line[0].isdigit():
-                overflowed_digits = [ char for char in decoded_line.split() if char.isdigit() ]
-                string_digits = ("").join(overflowed_digits)
-                last_line_recieved += string_digits
+    control_input = -gain_matrix * state_vector
+    return control_input
 
-            # Store the data now that we have the entire line
-            data = last_line_recieved.split(",")
-            state_vector = {
-                'pendulum_angle': data[0],
-                'cart_position': data[1],
-                'pendulum_angular_velocity': data[2],
+class Arduino():
+    def __init__(self, port, baud_rate, timeout):
+        self.serial = serial.Serial(port, baud_rate, timeout = timeout)
 
-                # Sometimes the carriage return (\r) stays appended
-                'cart_velocity': (data[3] if '\r' not in data[3] else data[3].split('\r')[0])
-            }
+    def start_control(self):
 
-            print(state_vector)
+        last_line_recieved = ""
 
-            # Reset the variable
-            last_line_recieved = ""
+        try:
+            while True:
+                serial_bytes = self.serial.readline()
+                decoded_line = str(serial_bytes.decode('utf8'))
 
-        elif len(serial_bytes) != 0:
-            last_line_recieved += decoded_line
+                # Read from serial until we capture the whole line of data
+                if (len(serial_bytes) != 0) and (b'\n' in serial_bytes):
 
-        else:
+                    # Sometimes digits overflow from one line onto the next
+                    overflowed_digits = _check_for_overflowed_digits(decoded_line)
+                    if overflowed_digits is not None:
+                        last_line_recieved += overflowed_digits
+
+                    # Parse data into state_vector and send control input using LQR
+                    state_vector = _compute_state_vector(last_line_recieved)
+                    control_input = compute_input(state_vector)
+                    serial.write(str(control_input).encode())
+
+
+                    # Reset the variable
+                    last_line_recieved = ""
+
+                elif len(serial_bytes) != 0:
+                    last_line_recieved += decoded_line
+
+                else:
+                    pass
+
+        except KeyboardInterrupt:
             pass
+
+
+if __name__ == "__main__":
+    arduino = Arduino("/dev/cu.usbmodem14101", baud_rate = 9400, timeout = 0)
+    arduino.start_control()
