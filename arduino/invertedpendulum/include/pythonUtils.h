@@ -28,6 +28,12 @@ float encoderCountToCartPositionInches(long cartEncoderCount, double encoderPPR)
     return idlerPulleyRadius * cartAngle;
 }
 
+float encoderCountToPendulumAngleRadians(long encoderCount, double encoderPPR) {
+    // Since we use the <Encoder.h> library which initializes the encoder to zero at the start,
+    // we need to correct the value because we start at a pendulum angle of +180 degrees.
+    return PI + encoderCountToAngleRadians(encoderCount, encoderPPR);
+}
+
 void sendStateVectorToPython(stateVector state)
 {
     Serial.print(state.pendulumAngle);

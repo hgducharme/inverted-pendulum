@@ -1,6 +1,5 @@
-#define ENCODER_OPTIMIZE_INTERRUPTS
-
 #include <Arduino.h>
+#define ENCODER_OPTIMIZE_INTERRUPTS
 #include <Encoder.h>
 #include "motorControllerDrokL298.h"
 #include "pythonUtils.h"
@@ -20,8 +19,8 @@ const double ENCODER_PPR = 2400.0;
 
 // Initialize variables
 unsigned long previousMilliseconds = 0;
-float previousCartPosition = 0;
-float previousPendulumAngle = 0;
+float previousCartPosition = 0.0; // inches
+float previousPendulumAngle = PI; // radians
 
 void setup()
 {
@@ -44,7 +43,7 @@ void loop()
 
     // Compute the state
     stateVector state;
-    state.pendulumAngle = encoderCountToAngleRadians(pendulumEncoderCount, ENCODER_PPR);              // radians
+    state.pendulumAngle = encoderCountToPendulumAngleRadians(pendulumEncoderCount, ENCODER_PPR);      // radians
     state.cartPosition = encoderCountToCartPositionInches(cartEncoderCount, ENCODER_PPR);             // in
     state.pendulumAngularVelocity = (state.pendulumAngle - previousPendulumAngle)/(TIMEFRAME/1000.0); // radians/s
     state.cartVelocity = (state.cartPosition - previousCartPosition)/(TIMEFRAME/1000.0);              // in/s
