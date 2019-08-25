@@ -2,6 +2,7 @@
 #define PYTHON_UTILS
 
 #include <Arduino.h>
+#include <math.h>
 
 struct stateVector
 {
@@ -28,10 +29,22 @@ float encoderCountToCartPositionInches(long cartEncoderCount, double encoderPPR)
     return idlerPulleyRadius * cartAngle;
 }
 
+float normalizeAngle(float angle) {
+    // Constrain an angle between [-180, 180) in radians
+    // see: https://stackoverflow.com/questions/11498169/dealing-with-angle-wrap-in-c-code
+
+    angle = fmod(angle + PI, 2 * PI);
+    if (angle < 0)
+        angle += 2 * PI;
+    return angle - PI;
+}
+
 float encoderCountToPendulumAngleRadians(long encoderCount, double encoderPPR) {
     // Since we use the <Encoder.h> library which initializes the encoder to zero at the start,
     // we need to correct the value because we start at a pendulum angle of +180 degrees.
-    return PI + encoderCountToAngleRadians(encoderCount, encoderPPR);
+    
+    float pendulumAngle = PI + encoderCountToAngleRadians(encoderCount, encoderPPR);
+    return normalizeAngle(pendulumAngle);
 }
 
 void sendStateVectorToPython(stateVector state)
