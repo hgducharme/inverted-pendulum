@@ -37,6 +37,7 @@ void loop()
   unsigned long currentMilliseconds = millis();
   long cartEncoderCount = cartEncoder.read();
   long pendulumEncoderCount = pendulumEncoder.read();
+  double controlInput; // voltage
 
   // Send values to python every n milliseconds
   if ( (currentMilliseconds - previousMilliseconds) > TIMEFRAME ) {
@@ -57,13 +58,20 @@ void loop()
 
   }
 
-  // moveCart('R', 20);
-  // delay(50);
+  controlInput = readControlInputFromPython();
+  double mappedInput = map(abs(controlInput), 0, 60, 0, 255);
+  // Serial.println(mappedInput);
 
-  // brake();
+  if (controlInput < 0) {
+    moveCart('L', mappedInput);
+    delay(25);
+  }
+  else if (controlInput > 0) {
+    moveCart('R', mappedInput);
+    delay(25);
+  }
+  else {
+    brake();
+  }
 
-  // moveCart('L', 20);
-  // delay(50);
-
-  // brake();
 }

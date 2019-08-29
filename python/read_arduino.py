@@ -16,33 +16,70 @@ def _check_for_overflowed_digits(string):
         return None
 
 
-def run_arduino_control(action, port, baud_rate=0, timeout=0):
+def run_arduino_control(action, port, baud_rate=9400, timeout=0, start_character = None, end_character = None):
+
+    """
+    TODO: This needs to be refactored. Instead of the if else statement I have going on for the start and end characters,
+    the code inside the if else statement should be outsourced to another function or something. This is not very DRY right now.
+    """
+
     arduino = serial.Serial(port, baud_rate, timeout=timeout)
     last_line_recieved = ""
+    recieved_full_line_of_data = False
+    recieving_data_in_progress = False
 
     try:
-        while True:
-            serial_bytes = arduino.readline()
-            decoded_line = str(serial_bytes.decode("utf8"))
+        # If there is a start character and end character, parse the data with that
+        if (start_character is not None) and (end_character is not None):
+            while True:
+                serial_bytes = arduino.readline()
+                decoded_line = str(serial_bytes.decode("utf8"))
+                
+                if recieving_data_in_progress:
+                    last_line_recieved += decoded_line
 
-            # Read from serial until we capture the whole line of data
-            if (len(serial_bytes) != 0) and (b"\n" in serial_bytes):
+                    # If we reached the end of this data packet, process the data
+                    if decoded_line.find(end_character) != -1:
+                        recieved_full_line_of_data = True
+                        recieving_data_in_progress = False
+                        data_string = last_line_recieved.split(start_character)[1].split(end_character)[0]
+                        action(arduino, data_string)
+                        last_line_recieved = ""
 
-                # Sometimes digits overflow from one line onto the next
-                overflowed_digits = _check_for_overflowed_digits(decoded_line)
-                if overflowed_digits is not None:
-                    last_line_recieved += overflowed_digits
+                # If we see the start of a data packet, start reading in the data
+                elif decoded_line.find(start_character) != -1:
+                    recieving_data_in_progress = True
+                    last_line_recieved += decoded_line
 
-                action(arduino, last_line_recieved)
+                # Else, we haven't recieved anything meaningful so do nothing
+                else:
+                    pass
 
-                # Reset the variable
-                last_line_recieved = ""
+                
+        # Else, parse the data by new line "\n"
+        else:
+            while True:
+                serial_bytes = arduino.readline()
+                decoded_line = str(serial_bytes.decode("utf8"))
 
-            elif len(serial_bytes) != 0:
-                last_line_recieved += decoded_line
+                # Read from serial until we capture the whole line of data
+                if (len(serial_bytes) != 0) and (b"\n" in serial_bytes):
 
-            else:
-                pass
+                    # Sometimes digits overflow from one line onto the next
+                    overflowed_digits = _check_for_overflowed_digits(decoded_line)
+                    if overflowed_digits is not None:
+                        last_line_recieved += overflowed_digits
+
+                    action(arduino, last_line_recieved)
+
+                    # Reset the variable
+                    last_line_recieved = ""
+
+                elif len(serial_bytes) != 0:
+                    last_line_recieved += decoded_line
+
+                else:
+                    pass
 
     except KeyboardInterrupt:
         arduino.close()
@@ -64,7 +101,9 @@ if __name__ == "__main__":
             [[-98.93469078, -23.53755766, -15.49560488, -26.21828687]]
         )
 
-        control_input = np.dot(gain_matrix, state_vector)[0][0]
+        # Perform the matrix multiplication and round the voltage to two decimal places
+        control_input = round(np.dot(gain_matrix, state_vector)[0][0], 2)
+
         return control_input
 
     def parse_state_vector(data_string):
@@ -85,19 +124,34 @@ if __name__ == "__main__":
         return state_vector
 
     def write_to_arduino(arduino_serial_port, string):
-        pass
+        arduino_serial_port.write(string)
 
     def interpret_data(arduino_serial_port, data_string):
+        previous_control_input = 0
 
-        # Parse data into state_vector and send control input using LQR
-        state_vector = parse_state_vector(data_string)
+        """
+        Parse data into state_vector and send control input using LQR
+        """
 
-        # If the pendulum angle is outside of the bounds (45 degrees), don't supply any control input
-        if abs(state_vector["pendulum_angle"]) > (pi / 4.0):
-            control_input = 0.0
-        else:
-            control_input = compute_input(state_vector)
+        # If I try to print to serial from Arduino it messes up code in parse_state_vector
+        # So catch the IndexError that way I can print things from Arduino for debugging purposes
+        try:
+            state_vector = parse_state_vector(data_string)
 
-        write_to_arduino(arduino_serial_port, str(control_input).encode())
+            # If the pendulum angle is outside of the bounds (45 degrees), don't supply any control input
+            if abs(state_vector["pendulum_angle"]) > (pi / 4.0):
+                control_input = 0.0
+            else:
+                control_input = compute_input(state_vector)
 
-    run_arduino_control(interpret_data, "/dev/cu.usbmodem14101", baud_rate=9400, timeout=0)
+            encoded_control_input_string = ("<" + str(control_input) + ">").encode()
+            write_to_arduino(arduino_serial_port, encoded_control_input_string)
+
+            if control_input != previous_control_input:
+                print(f"{control_input} -- {state_vector}")
+                previous_control_input = control_input
+
+        except IndexError:
+            print(data_string)
+
+    run_arduino_control(interpret_data, "/dev/cu.usbmodem14101", baud_rate=9400, timeout=0, start_character="<", end_character=">")
