@@ -19,7 +19,7 @@ const double ENCODER_PPR = 2400.0;
 
 // Initialize variables
 unsigned long previousMilliseconds = 0;
-float previousCartPosition = 0.0; // inches
+float previousCartPosition = 0.0; // meters
 float previousPendulumAngle = PI; // radians
 
 void setup()
@@ -45,7 +45,7 @@ void loop()
     // Compute the state
     stateVector state;
     state.pendulumAngle = encoderCountToPendulumAngleRadians(pendulumEncoderCount, ENCODER_PPR);      // radians
-    state.cartPosition = encoderCountToCartPositionInches(cartEncoderCount, ENCODER_PPR);             // in
+    state.cartPosition = encoderCountToCartPositionMeters(cartEncoderCount, ENCODER_PPR);             // in
     state.pendulumAngularVelocity = (state.pendulumAngle - previousPendulumAngle)/(TIMEFRAME/1000.0); // radians/s
     state.cartVelocity = (state.cartPosition - previousCartPosition)/(TIMEFRAME/1000.0);              // in/s
 
@@ -58,9 +58,9 @@ void loop()
 
   }
 
+  // NOTE: A PWM value of 35 is essentially the lowest value to start moving the cart due to friction
   controlInput = readControlInputFromPython();
-  double mappedInput = map(abs(controlInput), 0, 60, 0, 255);
-  // Serial.println(mappedInput);
+  double mappedInput = map(abs(controlInput), 0, 12, 40, 255);
 
   if (controlInput < 0) {
     moveCart('L', mappedInput);
