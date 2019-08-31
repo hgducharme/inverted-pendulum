@@ -132,11 +132,11 @@ class InvertedPendulum:
         denominator = self.massSystem - (self._beta * self.massPendulum * self.lengthCM)
 
         A31 = _g * self._beta * self.massSystem * equilibriumPoint / denominator
-        A34 = self.frictionCoeff * self._beta * equilibriumPoint / denominator
-        A41 = -self.massPendulum * _g * self.lengthCM * self._beta / denominator
+        A34 = -self.frictionCoeff * self._beta * equilibriumPoint / denominator
+        A41 = self.massPendulum * _g * self.lengthCM * self._beta / denominator
         A44 = -self.frictionCoeff / denominator
 
-        B31 = -self._beta * equilibriumPoint / denominator
+        B31 = self._beta * equilibriumPoint / denominator
         B41 = 1 / denominator
 
         A = [[0, 0, 1, 0], [0, 0, 0, 1], [A31, 0, 0, A34], [A41, 0, 0, A44]]
@@ -146,7 +146,7 @@ class InvertedPendulum:
 
         self._stateSpace = ss(A, B, C, D)
 
-    def modelIntegrator(self, time, state):
+    def integrate_nonlinear_dynamics(self, time, state):
         """
 
         scipy.integrate.solve_ivp() requires that a function only take inputs t and y.
