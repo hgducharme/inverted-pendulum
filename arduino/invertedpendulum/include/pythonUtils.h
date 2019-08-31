@@ -16,7 +16,7 @@ struct stateVector
 };
 
 float encoderCountToAngleDegrees(long encoderCount);
-float encoderCountToCartPositionInches(long cartEncoderCount, double encoderPPR);
+float encoderCountToCartPositionMeters(long cartEncoderCount, double encoderPPR);
 void sendStateVectorToPython(stateVector state);
 double readControlInputFromPython();
 
@@ -25,9 +25,9 @@ float encoderCountToAngleRadians(long encoderCount, double encoderPPR)
     return (encoderCount / encoderPPR) * (2.0 * PI);
 }
 
-float encoderCountToCartPositionInches(long cartEncoderCount, double encoderPPR)
+float encoderCountToCartPositionMeters(long cartEncoderCount, double encoderPPR)
 {
-    float idlerPulleyRadius = 0.189;                                            // inches
+    float idlerPulleyRadius = 0.0048006;                                        // meters
     float cartAngle = encoderCountToAngleRadians(cartEncoderCount, encoderPPR); // radians
     return idlerPulleyRadius * cartAngle;
 }
