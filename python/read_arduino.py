@@ -98,7 +98,7 @@ if __name__ == "__main__":
             ]
         )
         gain_matrix = np.array(
-            [[-98.93469078, -23.53755766, -15.49560488, -26.21828687]]
+            [[-16.35427012, -2.14867521,  -2.43567308, -6.13142817]] # [[102.12566958, -25.78410256, 16.83304134, -28.43278804]]
         )
 
         # Perform the matrix multiplication and round the voltage to two decimal places
@@ -127,19 +127,21 @@ if __name__ == "__main__":
         arduino_serial_port.write(string)
 
     def interpret_data(arduino_serial_port, data_string):
-        previous_control_input = 0
 
         """
         Parse data into state_vector and send control input using LQR
         """
+
+        previous_control_input = 0
+        previous_state_vector = {}
 
         # If I try to print to serial from Arduino it messes up code in parse_state_vector
         # So catch the IndexError that way I can print things from Arduino for debugging purposes
         try:
             state_vector = parse_state_vector(data_string)
 
-            # If the pendulum angle is outside of the bounds (45 degrees), don't supply any control input
-            if abs(state_vector["pendulum_angle"]) > (pi / 4.0):
+            # If the pendulum angle is outside of the bounds, don't supply any control input
+            if abs(state_vector["pendulum_angle"]) > np.deg2rad(35):
                 control_input = 0.0
             else:
                 control_input = compute_input(state_vector)
@@ -147,9 +149,10 @@ if __name__ == "__main__":
             encoded_control_input_string = ("<" + str(control_input) + ">").encode()
             write_to_arduino(arduino_serial_port, encoded_control_input_string)
 
-            if control_input != previous_control_input:
+            if (control_input != previous_control_input) or (state_vector != previous_state_vector):
                 print(f"{control_input} -- {state_vector}")
                 previous_control_input = control_input
+                previous_state_vector = state_vector
 
         except IndexError:
             print(data_string)

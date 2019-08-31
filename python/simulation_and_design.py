@@ -51,60 +51,88 @@ def get_transfer_functions(statespace_model):
 
     return theta_tf, cart_tf
 
+def is_controllable_and_observable(A, B, C):
+    controllabilityMatrix = ctrb(A, B)
+    observabilityMatrix = obsv(A, C)
+    eigenvalues, eigenvectors = np.linalg.eig(A)
+
+    if np.linalg.matrix_rank(controllabilityMatrix) == np.linalg.matrix_rank(A):
+        controllable = True
+    else:
+        controllable = False
+
+    if np.linalg.matrix_rank(observabilityMatrix) == np.linalg.matrix_rank(A):
+        observable = True
+    else:
+        observable = False
+
+    return controllable, observable
+
+
 
 if __name__ == "__main__":
 
-    # Create an inverted pendulum system
-    sys = InvertedPendulum(massCart=0.27, massPendulum=0.125, lengthCM=0.15, totalLength=0.30, frictionCoeff=2.5, cartWidth=0.0635, cartHeight=0.053975, railsLength = .45)
-    sys.controlLaw = 0
+    # Shim measurements
+    # mass: 0.016 kg
+    # length: 12 in
 
-    # Solve and plot the non-linear dynamics for no control input
-    initialConditions = [0, 0, 0.1, 0]
+    #####################################
+    #          Natural response         #
+    #####################################
+
+
+    # Create an inverted pendulum system
+    system = InvertedPendulum(massCart=0.27, massPendulum=0.016, lengthCM=0.1524, totalLength=0.3048, frictionCoeff=2.5, cartWidth=0.0635, cartHeight=0.053975, railsLength = .45)
+    system.controlLaw = 0
+
+    # Solve the non-linear dynamics for no control input
+    initialConditions = [0, 0, 2, 0]
     timeSpan = [0, 9]
     stepSize = 0.01
-    solution = solve_ivp(sys.modelIntegrator, [0, 9], [0, 0, 0.1, 0], max_step = stepSize)
-    plot_dynamics(solution.t, solution.y[0], solution.y[1])
-    sys.make_animation(solution.t, solution.y[0], solution.y[1])
+    solution = solve_ivp(system.integrate_nonlinear_dynamics, timeSpan, initialConditions, max_step = stepSize)
 
+    # Plot and animate the result
+    time = solution.t
+    theta_response = solution.y[0]
+    cart_response = solution.y[1]
+    # plot_dynamics(time, theta_response, cart_response)
+    # system.make_animation(time, theta_response, cart_response)
+    
     # Create the state space model to start analyzing control
-    sys.stateSpace = (1)
-    model = sys.stateSpace
-    controllabilityMatrix = ctrb(model.A, model.B)
-    observabilityMatrix = obsv(model.A, model.C)
-    eigenvalues, eigenvectors = np.linalg.eig(model.A)
+    system.stateSpace = (1)
+    model = system.stateSpace
+    is_controllable, is_observable = is_controllable_and_observable(model.A, model.B, model.C)
 
-    if np.linalg.matrix_rank(controllabilityMatrix) == 4:
-        print('The system is controllable.')
-    else:
-        print('The system is not controllable.')
 
-    if np.linalg.matrix_rank(observabilityMatrix) == 4:
-        print('The system is observable.')
-    else:
-        print('The system is not observable.')
+    #####################################
+    #            LQR Design             #
+    #####################################
+
 
     # Define the values that build the Q and R matricies
     # This has the form [desired settling time, max desired value]
     desired_settling_times = {
-        'theta': 0.3,
-        'cart': 5,
-        'theta_dot': None,
-        'cart_dot': None
+        'theta': 0.5,
+        'cart': 6,
+        'theta_dot': 0.5,
+        'cart_dot': 1,
     }
     max_desired_values = {
         'theta': np.deg2rad(20),
         'cart': 0.19,
-        'theta_dot': None,
+        'theta_dot': np.deg2rad(90),
         'cart_dot': None,
-        'control_input': 10
+        'control_input': 12
     }
 
     # Build the Q and R matricies
     q1 = ( desired_settling_times['theta'] * (max_desired_values['theta']**2) )**(-1)
     q2 = ( desired_settling_times['cart'] * (max_desired_values['cart']**2) )**(-1)
-    q3 = 1
+    q3 = ( desired_settling_times['theta_dot'] * (max_desired_values['theta_dot']**2) )**(-1)
     q4 = 1
     r1 = ( max_desired_values['control_input']**(-2) )
+
+    # Custom inputs
 
     Q = [
         [q1, 0, 0, 0],
@@ -113,60 +141,26 @@ if __name__ == "__main__":
         [0, 0, 0, q4],
     ]
     
-    R = [
-        [r1, 0, 0, 0],
-        [0, 1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, 1],
-    ]
+    R = [1]
 
     # Solve the Riccati equation and compute K
-    sys.stateSpace = (1)
-    pendulum_up_model = sys.stateSpace
-    feedback_gain, P, closedloop_eigenvalues = lqr(pendulum_up_model, Q, r1)
+    system.stateSpace = (1)
+    pendulum_up_model = system.stateSpace
+    feedback_gain, P, closedloop_eigenvalues = lqr(pendulum_up_model, Q, R)
+    print(feedback_gain)
 
-    # Simulate the closed loop system to an inital condition
+    # Compute the response to a step input 
     closedloop_sys = ss(model.A - (model.B)*feedback_gain, model.B, model.C, model.D)
-    time_span = np.linspace(0, 5, 5/0.01)
-    IC = [0, 0, 2, 0]
+    time_span = np.linspace(0, 10, 10/0.01)
+    IC = [np.deg2rad(-5), 0, -2, 0]
     time, response = step_response(closedloop_sys, time_span, IC)
+
+    # Plot and animate the response
     theta_response = response[0]
     cart_response = response[1]
     plot_dynamics(time, theta_response, cart_response)
-    sys.make_animation(time, theta_response, cart_response)
+    system.make_animation(time, theta_response, cart_response)
 
     # Get each output as a transfer function so we can analyze its step response
     # tf() is very picky about the inputs
     theta_tf, cart_tf = get_transfer_functions(model)
-
-    # Build a PID transfer function and analyze the feedback step response
-    # PID transfer function has the form: C(s) = Kp*s + Ki/s + Kd * (s * N)/(s + N)
-    # kp = 0
-    # ki = 0
-    # kd = 0
-    # filter_coeff = 100
-    # pid_tf = pid_transfer_function(kp, ki, kd, filter_coeff)
-    
-    # # Analyze the closed loop step response
-    # closedloop_tf = series(pid_tf, theta_tf)
-    
-    # time_step = 0.1
-    # time_span = np.linspace(0, 15, 15/time_step)
-    # response = feedback(closedloop_tf, 1)
-    
-    # t, theta_response = step_response(closedloop_tf, time_span)
-    # plt.plot(t, np.rad2deg(theta_response))
-    # plt.legend(['Theta'],loc = 'best')
-    # plt.show()
-
-    # Since theta_tf is unstabe without feedback, this plot just shows the exponential growth
-    # Since there is an eigenvalue in the right half plane one of the exponential terms will grow due
-    # to the positive real part of said eigenvalue
-    # t, theta_response = step_response(theta_tf, time_span)
-    # plt.plot(t, np.rad2deg(theta_response))
-    # plt.legend(['Theta'],loc = 'best')
-    # plt.show()
-
-    # solution = solve_ivp(sys.modelIntegrator, [0, 20], [0, 0, 0.1, 0], max_step = 0.01)
-    # plot_dynamics(solution.t, solution.y[0], solution.y[1])
-    # make_animation(solution)
