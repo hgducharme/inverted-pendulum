@@ -112,9 +112,9 @@ if __name__ == "__main__":
     # Define the values that build the Q and R matricies
     # This has the form [desired settling time, max desired value]
     desired_settling_times = {
-        'theta': 0.5,
+        'theta': 0.3,
         'cart': 6,
-        'theta_dot': 0.5,
+        'theta_dot': 0.1,
         'cart_dot': 1,
     }
     max_desired_values = {
@@ -141,7 +141,7 @@ if __name__ == "__main__":
         [0, 0, 0, q4],
     ]
     
-    R = [1]
+    R = [10]
 
     # Solve the Riccati equation and compute K
     system.stateSpace = (1)
