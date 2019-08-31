@@ -14,7 +14,7 @@ Encoder cartEncoder(cartEncoderPhaseA, cartEncoderPhaseB);
 Encoder pendulumEncoder(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
 
 // Initialize named constants
-const unsigned long TIMEFRAME = 100; // milliseconds
+const unsigned long TIMEFRAME = 50; // milliseconds
 const double ENCODER_PPR = 2400.0;
 
 // Initialize variables
@@ -24,7 +24,7 @@ float previousPendulumAngle = PI; // radians
 
 void setup()
 {
-  Serial.begin(9400);
+  Serial.begin(19200);
 
   // Motor controller
   pinMode(IN1, OUTPUT);
@@ -52,7 +52,7 @@ void loop()
     sendStateVectorToPython(state);
 
     // Store the current data for computation in the next loop
-    previousMilliseconds = millis();
+    previousMilliseconds = TIMEFRAME;
     previousPendulumAngle = state.pendulumAngle;
     previousCartPosition = state.cartPosition;
 
@@ -60,15 +60,13 @@ void loop()
 
   // NOTE: A PWM value of 35 is essentially the lowest value to start moving the cart due to friction
   controlInput = readControlInputFromPython();
-  double mappedInput = map(abs(controlInput), 0, 12, 40, 255);
+  double mappedInput = map(abs(controlInput), 0, 60, 20, 255);
 
   if (controlInput < 0) {
     moveCart('L', mappedInput);
-    delay(25);
   }
   else if (controlInput > 0) {
     moveCart('R', mappedInput);
-    delay(25);
   }
   else {
     brake();

@@ -98,7 +98,7 @@ if __name__ == "__main__":
             ]
         )
         gain_matrix = np.array(
-            [[-16.35427012, -2.14867521,  -2.43567308, -6.13142817]] # [[102.12566958, -25.78410256, 16.83304134, -28.43278804]]
+            [[-13.73292129, -0.67947076,  -2.04676789, -5.30433475]]#[[-16.35427012, -2.14867521,  -2.43567308, -6.13142817]]
         )
 
         # Perform the matrix multiplication and round the voltage to two decimal places
@@ -157,4 +157,4 @@ if __name__ == "__main__":
         except IndexError:
             print(data_string)
 
-    run_arduino_control(interpret_data, "/dev/cu.usbmodem14101", baud_rate=9400, timeout=0, start_character="<", end_character=">")
+    run_arduino_control(interpret_data, "/dev/cu.usbmodem14101", baud_rate=19200, timeout=0, start_character="<", end_character=">")
