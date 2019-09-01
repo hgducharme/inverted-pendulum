@@ -133,6 +133,10 @@ if __name__ == "__main__":
     r1 = ( max_desired_values['control_input']**(-2) )
 
     # Custom inputs
+    q1 = 200.0
+    q2 = 60.0
+    q3 = 50.0
+    q4 = 0.5
 
     Q = [
         [q1, 0, 0, 0],
@@ -141,7 +145,7 @@ if __name__ == "__main__":
         [0, 0, 0, q4],
     ]
     
-    R = [10]
+    R = [0.1]
 
     # Solve the Riccati equation and compute K
     system.stateSpace = (1)
@@ -152,7 +156,7 @@ if __name__ == "__main__":
     # Compute the response to a step input 
     closedloop_sys = ss(model.A - (model.B)*feedback_gain, model.B, model.C, model.D)
     time_span = np.linspace(0, 10, 10/0.01)
-    IC = [np.deg2rad(-5), 0, -2, 0]
+    IC = [np.deg2rad(-10), 0, 0, 0]
     time, response = step_response(closedloop_sys, time_span, IC)
 
     # Plot and animate the response
