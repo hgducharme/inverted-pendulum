@@ -1,9 +1,5 @@
 # inverted-pendulum
 
-My inverted pendulum project.
-
-<br>
-
 <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/demo.gif" width="900">
 
 <br>
