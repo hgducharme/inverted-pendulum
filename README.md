@@ -4,7 +4,7 @@ My inverted pendulum project.
 
 <br>
 
-![](https://media.giphy.com/media/U1mLWyaYyFb5H2tP9F/giphy.gif)
+<img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/demo.gif" width="800">
 
 <br>
 
