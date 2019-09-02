@@ -4,7 +4,7 @@ My inverted pendulum project.
 
 <br>
 
-![Imgur](https://i.imgur.com/CPBmUAk.gifv)
+![](https://media.giphy.com/media/U1mLWyaYyFb5H2tP9F/giphy.gif)
 
 <br>
 
