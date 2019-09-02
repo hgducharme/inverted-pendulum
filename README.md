@@ -4,13 +4,17 @@ My inverted pendulum project.
 
 <br>
 
+# The Mathematical Model
+
+<br>
+
 # Timeline
 
 This project might be trivial to some people, but it sure as hell wasn't for me, so I'm going to document my experience and lessons learned below.
 
 <hr>
 
-1. I first started this project by buying a printer off some dude in my college town for $15. I had zero experience with Arduinos and electronics at this time.
+1. I first started this project by buying a printer off some dude in my town for $15. I had zero experience with Arduinos and electronics at this time.
 
 2. I took apart the printer and extracted the printer carriage assembly and was able to create a small setup that would suffice for getting this inverted pendulum project off the ground.
 
@@ -38,8 +42,24 @@ This project might be trivial to some people, but it sure as hell wasn't for me,
 
 14. The new motor, timing belt, and pulleys came in the mail. The new motor was about 2x the size of the old motor, which was something I didn't anticipate. This means the hole in the center of the 2x4 that originally was going to house the motor is no longer viable--this motor was simply too big. I then changed the design to have the motor be mounted to the end of the 2x4 with an angle bracket, and have the rotary encoder sit in the hole the motor originally was to sit in.
 
-15. I spent the rest of the next day machining a rectangular piece of sheet metal to hold the rotary encoder flush with the top of the 2x4. This meant drilling a 3/4" hole for the center of the encoder, grinding down the screws and transferring the holes onto the piece of sheet metal, and then cutting the sheet metal to size. This time, however, I made sure to harden the screws after grinding them down, that way when I was unscrewing them with pliers they wouldn't crush and get stuck like last time. To harden them, I took a blowtorch, heated them up for about 45 seconds, and stuck them in cold water. I continued making this contraption and I was about 90% done when the saw blade caught the piece of sheet metal and destroyed it. Hmmm, 3 hours down the drain. I laughed at the fact that nothing ever goes according to plan and then had to muster the discipline to start over. Once again, I cut the sheet metal, drilled the hole for the center of the enocder, grided the screws, hardened them, transferred the holes, and drilled out the holes. 
+15. I spent the rest of the next day machining a rectangular piece of sheet metal to hold the rotary encoder flush with the top of the 2x4. This meant drilling a 3/4" hole for the center of the encoder, grinding down the screws and transferring the holes onto the piece of sheet metal, and then cutting the sheet metal to size. This time, however, I made sure to harden the screws after grinding them down, that way when I was unscrewing them with pliers they wouldn't crush and get stuck like last time. To harden them, I took a blowtorch, heated them up for about 45 seconds, and stuck them in cold water. I continued making this contraption and I was about 90% done when the saw blade caught the piece of sheet metal and destroyed it. Hmmm, 3 hours down the drain. I laughed at the fact that nothing ever goes according to plan and then had to muster the discipline to start over. Once again, I cut the sheet metal, drilled the hole for the center of the enocder, grided the screws, hardened them, transferred the holes, and drilled them out. 
 
 15. I spent another day thinking about this design decision, and when I was playing around with how everything would be setup, I realized the belt would have a slight twist in it. After tinkering a bit more, I finally decided to just mount the motor and the rotary encoder horizontally on either side of the linear rails system. This was the best design in my opinion. I didn't need to worry about parts being underneath the 2x4 (everything sat on top), it was KISS, and there would be no twist in the belt. However, it would require more machining to make the rotary encoder work with the bracket I chose. No big deal. After yesterday, I felt super comfortable doing this.
 
-16. I bought another angle bracket and machined it for the rotary encoder just like the previous 3 times. Turns out, I used the 
+16. I bought another angle bracket and machined it for the rotary encoder just like the previous 3 times.
+
+17. Next I had to line up the shafts with where the belt would mount onto the cart. This was to eliminate the motor from pulling up and down, or side to side on the cart. I took callipers and measured the vertical distance from the top of the 2x4 to where the belt would mount onto the cart. I did the same thing for the shaft of the motor and the rotary encoder that was going to measure the cart position. I took the differences and used these amounts to router out inlays in the 2x4 for the brackets to sit into. This would bring the motor and encoder down to be level with where the belt would mount on the cart.
+
+18. Finally I was starting to see the end of the hardware process. All I had to do now was mount the belt and everything would be finished.
+
+19. I then started to work on the whole point of this project--controlling the pendulum with an LQR controller. I started testing out the specs on the motor to see how much current it was drawing. I found out that near stall conditions it would spike to above 10A because it blew the fuse on my multimeter. This wasn't good because the motor controller could only handle spikes up to 15A for short amounts of time, and actually recommended having a 10A fuse in series with the motor to protect the hardware. Alas, I ended up wiring a 10A fuse in series as per the recommendation. 
+
+20. Then I worked on setting up a simulation environment in Python. I used this to start designing the LQR controller for the plant and seeing what would work and what wouldn't. Of course this was all just an estimate, because the actual hardware is going to different than my model. This took a couple days. I built an inverted pendulum animation that would show what should happen in different scenarios.
+
+21. I was now ready to actually start controlling the pendulum. This is where things go a little bit quicker and is documented in the code. It's now just a software problem, and that it goes exactly how one might expect it to go. You write some code, fix some bugs, maybe iterate on your logic, fix some more bugs, and slowly converge to a solution. At this point I was making sure the encoders were reading the right values, and everything was being computed correctly.
+
+22. I then started working on a communication protocol between Python and the Arduino. Essentially I was outsourcing the LQR matrix caclulation to Python, but this was so unnecessary and I don't know what I wasted my time on doing this. Later I would do it all on the Arduino, but this was the next step. Sometimes you try the bad designs before you realize there's better ways of doing it (basically what happened on the hardware side). I had to learn about UTF8 encoding and how to transfer bytes between the two parties. I was having issues with the Arduino sending encoded characters to Python, and learned this was potentially due to a not strong enough power supply. I ended up replacing the power drill battery I was using with a more standard 12V 20A AC to DC power supply. I worked on making a robust message system between Python and the Arduino. There was a start and end character to signify the start and end of a data packet, in order to mitigate messages lost and improving efficency of reading in data. 
+
+23. After I established the communication between the two, I started tweaking the LQR controller and was having a difficult time stabilizing the system. At some point I realized porting one single calculation out to Python was a garbage idea and worked on getting all the code on the Arduino. INSTANTLY it was so much smoother and the improvements could be seen. I realized I couldn't justify having Python calculate stuff. Maybe if I was implementing a Kalman filter it would be necessary, but I just couldn't justify it.
+
+24. After some tweaking, the system was getting really close to the final product. The cart still wouldn't stabilaize itself and kept wanting to run away. This was due to the fact that I was using the control law `u = Kx` instead of the proper control law `u = -Kx`--I was off by a negative! This got me even closer! Now the system would stabilize the pendulum but there was oscillatory motion in the cart's position. In terms of control theory, this meant that I had two unstable complex conjugate poles close to the origin. I needed to find a way to move them further negative and closer to the real axis. This would have the effect of making them stable and eliminate the oscillation. 
