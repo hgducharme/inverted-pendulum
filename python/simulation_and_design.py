@@ -76,6 +76,7 @@ if __name__ == "__main__":
     # mass: 0.016 kg
     # length: 12 in
 
+
     #####################################
     #          Natural response         #
     #####################################
@@ -151,7 +152,7 @@ if __name__ == "__main__":
     system.stateSpace = (1)
     pendulum_up_model = system.stateSpace
     feedback_gain, P, closedloop_eigenvalues = lqr(pendulum_up_model, Q, R)
-    print(feedback_gain)
+    print(f"gain: {feedback_gain}")
 
     # Compute the response to a step input 
     closedloop_sys = ss(model.A - (model.B)*feedback_gain, model.B, model.C, model.D)
@@ -168,4 +169,11 @@ if __name__ == "__main__":
     # Get each output as a transfer function so we can analyze its step response
     # tf() is very picky about the inputs
     theta_tf, cart_tf = get_transfer_functions(model)
-    print(closedloop_eigenvalues)
+    print(f"eigenvalues: {closedloop_eigenvalues}")
+
+
+    #####################################
+    #       Kalman Filter Design        #
+    #####################################
+
+    

@@ -4,6 +4,7 @@
 
 void moveCart(char direction, int speed);
 void brake();
+void testMotor();
 
 void moveCart(char direction, int speed)
 {
@@ -44,4 +45,13 @@ void brake() {
     digitalWrite(IN2, LOW);
     analogWrite(ENA, 0);
     delay(130);
+}
+
+void testMotor() {
+    moveCart('L', 255);
+    delay(100);
+    brake();
+    moveCart('R', 255);
+    delay(100);
+    brake();
 }
