@@ -19,10 +19,9 @@ const double ENCODER_PPR = 2400.0;
 const double IDLER_PULLEY_RADIUS = 0.0048006; // meters
 const unsigned long TIMEFRAME = 3;            // milliseconds
 const double ANGLE_BOUND = 30.0 * (PI/180.0); // radians
-
+float previousCartPosition = 0.0;             // meters
+float previousPendulumAngle = PI;             // radians
 unsigned long previousMilliseconds = 0;
-float previousCartPosition = 0.0; // meters
-float previousPendulumAngle = PI; // radians
 
 void setup()
 {
@@ -51,14 +50,16 @@ void loop()
     state.pendulumAngularVelocity = (state.pendulumAngle - previousPendulumAngle)/(TIMEFRAME/1000.0);    // radians/s
     state.cartVelocity = (state.cartPosition - previousCartPosition)/(TIMEFRAME/1000.0);                 // meters/s
 
-    // Compute control input using LQR
-    controlInput = computeControlInput(state, ANGLE_BOUND);
-
-    // Serial.println(controlInput);
-
+    // Compute control input using LQR and handle saturation
     // NOTE: A PWM value of 35 is essentially the lowest value to start moving the cart due to friction
-    double mappedInput = map(abs(controlInput), 0, 2000, 20, 255);
+    controlInput = computeControlInput(state, ANGLE_BOUND);
+    double mappedInput = map(abs(controlInput), 0, 1000, 15, 255);
 
+    if (mappedInput > 255) {
+      mappedInput = 255;
+    }
+
+    // Move the cart based on the computed input
     if (controlInput < 0) {
       moveCart('L', mappedInput);
     }

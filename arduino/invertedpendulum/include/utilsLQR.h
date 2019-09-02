@@ -17,7 +17,7 @@ double computeControlInput(stateVector state);
 
 float normalizeAngle(float angle)
 {
-    // Constrain an angle between [-180, 180) in radians
+    // Constrain an angle between [-pi, pi). Output is in radians
     // see: https://stackoverflow.com/questions/11498169/dealing-with-angle-wrap-in-c-code
 
     angle = fmod(angle + PI, 2 * PI);
@@ -48,7 +48,7 @@ float encoderCountToCartPosition(long cartEncoderCount, const double encoderPPR,
 
 double computeControlInput(stateVector state, double bound)
 {
-    double gainVector[4] = {-10000, -5000,  -100, -1};
+    double gainVector[4] = {-2000.0, 400.0,  -100.0, 800.0};
 
     if (abs(state.pendulumAngle) <= bound) {
         double controlInput = (gainVector[0] * state.pendulumAngle) + (gainVector[1] * state.cartPosition) + (gainVector[2] * state.pendulumAngularVelocity) + (gainVector[3] * state.cartVelocity);

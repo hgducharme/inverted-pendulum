@@ -112,14 +112,14 @@ if __name__ == "__main__":
     # Define the values that build the Q and R matricies
     # This has the form [desired settling time, max desired value]
     desired_settling_times = {
-        'theta': 0.3,
-        'cart': 6,
+        'theta': 0.2,
+        'cart': 1,
         'theta_dot': 0.1,
         'cart_dot': 1,
     }
     max_desired_values = {
-        'theta': np.deg2rad(20),
-        'cart': 0.19,
+        'theta': np.deg2rad(6),
+        'cart': 0.1,
         'theta_dot': np.deg2rad(90),
         'cart_dot': None,
         'control_input': 12
@@ -129,14 +129,14 @@ if __name__ == "__main__":
     q1 = ( desired_settling_times['theta'] * (max_desired_values['theta']**2) )**(-1)
     q2 = ( desired_settling_times['cart'] * (max_desired_values['cart']**2) )**(-1)
     q3 = ( desired_settling_times['theta_dot'] * (max_desired_values['theta_dot']**2) )**(-1)
-    q4 = 1
+    q4 = 10
     r1 = ( max_desired_values['control_input']**(-2) )
 
-    # Custom inputs
-    q1 = 200.0
-    q2 = 60.0
-    q3 = 50.0
-    q4 = 0.5
+    # Custom values
+    q1 = 100
+    q2 = 10
+    q3 = 50
+    q4 = 1
 
     Q = [
         [q1, 0, 0, 0],
@@ -145,7 +145,7 @@ if __name__ == "__main__":
         [0, 0, 0, q4],
     ]
     
-    R = [0.1]
+    R = [0.01]
 
     # Solve the Riccati equation and compute K
     system.stateSpace = (1)
@@ -162,9 +162,10 @@ if __name__ == "__main__":
     # Plot and animate the response
     theta_response = response[0]
     cart_response = response[1]
-    plot_dynamics(time, theta_response, cart_response)
-    system.make_animation(time, theta_response, cart_response)
+    # plot_dynamics(time, theta_response, cart_response)
+    # system.make_animation(time, theta_response, cart_response)
 
     # Get each output as a transfer function so we can analyze its step response
     # tf() is very picky about the inputs
     theta_tf, cart_tf = get_transfer_functions(model)
+    print(closedloop_eigenvalues)
