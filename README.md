@@ -4,6 +4,10 @@ My inverted pendulum project.
 
 <br>
 
+![Imgur](https://i.imgur.com/CPBmUAk.gifv)
+
+<br>
+
 # The Mathematical Model
 
 <br>
