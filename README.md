@@ -1,10 +1,6 @@
 # inverted-pendulum
 
-My inverted pendulum project.
-
-<br>
-
-![](https://media.giphy.com/media/U1mLWyaYyFb5H2tP9F/giphy.gif)
+<img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/demo.gif" width="900">
 
 <br>
 
@@ -67,3 +63,5 @@ This project might be trivial to some people, but it sure as hell wasn't for me,
 23. After I established the communication between the two, I started tweaking the LQR controller and was having a difficult time stabilizing the system. At some point I realized porting one single calculation out to Python was a garbage idea and worked on getting all the code on the Arduino. INSTANTLY it was so much smoother and the improvements could be seen. I realized I couldn't justify having Python calculate stuff. Maybe if I was implementing a Kalman filter it would be necessary, but I just couldn't justify it.
 
 24. After some tweaking, the system was getting really close to the final product. The cart still wouldn't stabilaize itself and kept wanting to run away. This was due to the fact that I was using the control law `u = Kx` instead of the proper control law `u = -Kx`--I was off by a negative! This got me even closer! Now the system would stabilize the pendulum but there was oscillatory motion in the cart's position. In terms of control theory, this meant that I had two unstable complex conjugate poles close to the origin. I needed to find a way to move them further negative and closer to the real axis. This would have the effect of making them stable and eliminate the oscillation. 
+
+25. I found that I programmed the loop wrong. I was supposed to have the loop run every `n` milliseconds, but I was updating the count wrong and this caused it to run at some timeframe I'm not sure of. Anywho, fixing this small error gave me the final result.
