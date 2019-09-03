@@ -48,10 +48,10 @@ void brake() {
 }
 
 void testMotor() {
-    moveCart('L', 255);
+    moveCart('L', 35);
     delay(100);
     brake();
-    moveCart('R', 255);
+    moveCart('R', 35);
     delay(100);
     brake();
 }
