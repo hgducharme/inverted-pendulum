@@ -26,13 +26,14 @@ def PID(kp = None, ki = None, kd = None, filter_coefficient = None, error = None
 
     return proportional + integral + derivative
 
-def plot_dynamics(time, theta, cart_position):
+def plot_dynamics(time, theta, cart_position, title = ""):
     fig, ax = plt.subplots(2, 1, sharex = True, sharey = False)
     ax[0].plot(time, np.rad2deg(theta))
     ax[1].plot(time, cart_position * (100.0 / 2.54))
     ax[0].set(ylabel="theta [deg]")
     ax[1].set(xlabel="time [s]", ylabel="cart position [in]")
     ax[1].tick_params()
+    ax[0].set(title=title)
     plt.show()
 
 def get_transfer_functions(statespace_model):
@@ -87,7 +88,7 @@ if __name__ == "__main__":
     system.controlLaw = 0
 
     # Solve the non-linear dynamics for no control input
-    initialConditions = [0, 0, 2, 0]
+    initialConditions = [0, 0, 1, 0]
     timeSpan = [0, 9]
     stepSize = 0.01
     solution = solve_ivp(system.integrate_nonlinear_dynamics, timeSpan, initialConditions, max_step = stepSize)
@@ -96,8 +97,8 @@ if __name__ == "__main__":
     time = solution.t
     theta_response = solution.y[0]
     cart_response = solution.y[1]
-    # plot_dynamics(time, theta_response, cart_response)
-    # system.make_animation(time, theta_response, cart_response)
+    plot_dynamics(time, theta_response, cart_response, "Natural Response")
+    system.make_animation(time, theta_response, cart_response)
     
     # Create the state space model to start analyzing control
     system.stateSpace = (1)
@@ -113,17 +114,17 @@ if __name__ == "__main__":
     # Define the values that build the Q and R matricies
     # This has the form [desired settling time, max desired value]
     desired_settling_times = {
-        'theta': 0.2,
-        'cart': 1,
-        'theta_dot': 0.1,
-        'cart_dot': 1,
+        'theta': 0.2,     # sec
+        'cart': 1,        # sec
+        'theta_dot': 0.1, # sec
+        'cart_dot': 1,    # sec
     }
     max_desired_values = {
-        'theta': np.deg2rad(6),
-        'cart': 0.1,
-        'theta_dot': np.deg2rad(90),
-        'cart_dot': None,
-        'control_input': 12
+        'theta': np.deg2rad(6),      # rad/s
+        'cart': 0.1,                 # m/s
+        'theta_dot': np.deg2rad(90), # rad/s
+        'cart_dot': None,            # m/s
+        'control_input': 12          # volts
     }
 
     # Build the Q and R matricies
@@ -134,10 +135,10 @@ if __name__ == "__main__":
     r1 = ( max_desired_values['control_input']**(-2) )
 
     # Custom values
-    q1 = 100
-    q2 = 10
-    q3 = 50
-    q4 = 1
+    # q1 = 100
+    # q2 = 10
+    # q3 = 50
+    # q4 = 1
 
     Q = [
         [q1, 0, 0, 0],
@@ -157,14 +158,14 @@ if __name__ == "__main__":
     # Compute the response to a step input 
     closedloop_sys = ss(model.A - (model.B)*feedback_gain, model.B, model.C, model.D)
     time_span = np.linspace(0, 10, 10/0.01)
-    IC = [np.deg2rad(-10), 0, 0, 0]
+    IC = [np.deg2rad(-5), 0, -2, 0]
     time, response = step_response(closedloop_sys, time_span, IC)
 
     # Plot and animate the response
     theta_response = response[0]
     cart_response = response[1]
-    # plot_dynamics(time, theta_response, cart_response)
-    # system.make_animation(time, theta_response, cart_response)
+    plot_dynamics(time, theta_response, cart_response, "LQR Control")
+    system.make_animation(time, theta_response, cart_response)
 
     # Get each output as a transfer function so we can analyze its step response
     # tf() is very picky about the inputs
