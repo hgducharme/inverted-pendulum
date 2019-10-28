@@ -6,7 +6,7 @@
 
 # The Mathematical Model
 
-## Assumptions
+### Assumptions
 
 1. All sensors and DC motors are ideal (no internal resistance)
 2. No Coulomb friction between cart and rails
@@ -15,12 +15,16 @@
 5. The belt assembly experiences no slippage
 6. The model neglects any sensor nonlinearities
 
-## Equations of Motion
+### Nomenclature
+
+<img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/nomenclature.PNG" width="650px">
+
+### Equations of Motion
 
 <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/EOMs.PNG" width="650px">
 
 
-## State Space Model
+### State Space Model
 
 <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/fullStateSpace.PNG" width="650px">
 
