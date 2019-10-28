@@ -6,13 +6,39 @@
 
 # The Mathematical Model
 
+### Assumptions
+
+1. All sensors and DC motors are ideal (no internal resistance)
+2. No Coulomb friction between cart and rails
+3. The motor exerts a force through the center of mass of the cart
+4. The pendulum is fixed to the rotation axis (i.e. no slippage)
+5. The belt assembly experiences no slippage
+6. The model neglects any sensor nonlinearities
+
+### Nomenclature
+
+<p align="center">
+  <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/nomenclature.PNG" width="650px">
+</p>
+
+### Equations of Motion
+
+<p align="center">
+  <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/EOMs.PNG" width="650px">
+</p>
+
+
+### State Space Model
+
+<p align="center">
+  <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/fullStateSpace.PNG" width="650px">
+</p>
+
 <br>
 
 # Timeline
 
 This project might be trivial to some people, but it sure as hell wasn't for me, so I'm going to document my experience and lessons learned below.
-
-<hr>
 
 1. I first started this project by buying a printer off some dude in my town for $15. I had zero experience with Arduinos and electronics at this time.
 
