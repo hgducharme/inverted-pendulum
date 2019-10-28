@@ -6,6 +6,8 @@
 
 # The Mathematical Model
 
+<img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/fullStateSpace.PNG">
+
 <br>
 
 # Timeline
