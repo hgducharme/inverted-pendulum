@@ -17,22 +17,22 @@
 
 ### Nomenclature
 
-![Nomencalature](https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/nomenclature.PNG)
-
-<!-- <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/nomenclature.PNG" width="650px"> -->
+<p align="center">
+  <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/nomenclature.PNG" width="650px">
+</p>
 
 ### Equations of Motion
 
-![Equations of motion](https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/EOMs.PNG)
-
-<!-- <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/EOMs.PNG" width="650px"> -->
+<p align="center">
+  <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/EOMs.PNG" width="650px">
+</p>
 
 
 ### State Space Model
 
-![State space model](https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/fullStateSpace.PNG)
-
-<!-- <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/fullStateSpace.PNG" width="650px"> -->
+<p align="center">
+  <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/fullStateSpace.PNG" width="650px">
+</p>
 
 <br>
 
