@@ -36,6 +36,27 @@ void setup()
 void loop()
 {
 
+  /* 
+  
+  Ideal object oriented code. Working on refactoring into this format.
+
+
+  // Initialize objects
+  Encoder cart(cartEncoderPhaseA, cartEncoderPhaseB);
+  Encoder pendulum(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
+  RotaryEncoder cartEncoder(cart);
+  RotaryEncoder pendulumEncoder(pendulum);
+  InvertedPendulum system(cartEncoder, pendulumEncoder);
+
+  // 
+  system.updateStateVector();
+  system.computeControlInput();
+  system.moveCart();
+  system.storeCurrentEncoderCounts();
+
+
+  */
+
   unsigned long currentMilliseconds = millis();
   long cartEncoderCount = cartEncoder.read();
   long pendulumEncoderCount = pendulumEncoder.read();
