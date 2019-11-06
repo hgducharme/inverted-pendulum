@@ -1,23 +1,26 @@
+#define ENCODER_OPTIMIZE_INTERRUPTS
 #include <Encoder.h>
 
-#ifndef RotaryEncoder_H
-#define RotaryEncoder_H
+#ifndef ROTARYENCODER_H
+#define ROTARYENCODER_H
 
 class RotaryEncoder
 {
 private:
     Encoder encoder;
+    long encoderCount;
     double encoderPPR;
-    double previousValue;
+    double angleLowerBound;
+    double angleUpperBound;
+
+    double convertEncoderCountToRadians(long encoderCount);
+    double normalizeAngle(double angle);
 
 public:
-    RotaryEncoder(Encoder &encoderReference, double encoderPPR);
-    
-    double getPreviousValue();
-    void setPreviousValue(double value);
-    double read();
-    double readInRadians();
-    double convertEncoderCountToRadians(double encoderCount);
+    RotaryEncoder(int phaseA, int phaseB, double encoderPPR);
+    long getCount();
+    double getRadians(double angleOffset);
+    void setAngleLowerAndUpperBounds(double lowerBound, double upperBound);
 };
 
-#endif
+#endif /* ROTARYENCODER_H */

@@ -1,32 +1,43 @@
 #include "RotaryEncoder.h"
 
-RotaryEncoder::RotaryEncoder(Encoder &encoderReference, double encoderPPR) : encoder(encoderReference)
-{
-    encoderPPR = encoderPPR;
-}
+RotaryEncoder::RotaryEncoder(int phaseA, int phaseB, double encoderPPR) 
+: encoder(phaseA, phaseB), encoderPPR(encoderPPR)
+{}
 
-double RotaryEncoder::getPreviousValue()
-{
-    return previousValue;
-}
-
-void RotaryEncoder::setPreviousValue(double value)
-{
-    previousValue = value;
-}
-
-double RotaryEncoder::read()
+inline long RotaryEncoder::getCount()
 {
     return encoder.read();
 }
 
-double RotaryEncoder::readInRadians()
+inline double RotaryEncoder::getRadians(double angleOffset = 0)
 {
-    double encoderCount = read();
-    double radians = convertEncoderCountToRadians(encoderCount);
+    long encoderCount = getCount();
+    double radians = angleOffset + convertEncoderCountToRadians(encoderCount);
+    radians = normalizeAngle(radians);
+
+    return radians;
 }
 
-double RotaryEncoder::convertEncoderCountToRadians(double encoderCount)
+inline double RotaryEncoder::convertEncoderCountToRadians(long encoderCount)
 {
     return (encoderCount / (encoderPPR)) * (2.0 * PI);
+}
+
+inline double RotaryEncoder::normalizeAngle(double angle)
+{
+    // Constrain an angle between [-pi, pi). Output is in radians
+    // see: https://stackoverflow.com/questions/11498169/dealing-with-angle-wrap-in-c-code
+
+    angle = fmod(angle + PI, 2 * PI);
+    
+    if (angle < 0)
+        angle += 2 * PI;
+
+    return angle - PI;
+}
+
+inline void RotaryEncoder::setAngleLowerAndUpperBounds(double lowerBound, double upperBound)
+{
+    angleLowerBound = lowerBound;
+    angleUpperBound = upperBound;
 }
