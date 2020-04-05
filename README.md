@@ -24,7 +24,7 @@
 ### Equations of Motion
 
 <p align="center">
-  <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/EOMs.PNG" width="650px">
+  <img src="https://github.com/hgducharme/inverted-pendulum/blob/master/demo/pictures_and_videos/equationsOfMotion.png" width="650px">
 </p>
 
 
