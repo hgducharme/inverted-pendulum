@@ -1,9 +1,10 @@
-#include <Arduino.h>
 #define ENCODER_OPTIMIZE_INTERRUPTS
+#include <Arduino.h>
 #include <Encoder.h>
-#include "motorControllerDrokL298.h"
-#include "utilsLQR.h"
 #include <math.h>
+#include "motorControllerDrokL298.h"
+#include "LQRController.h"
+#include "utilsLQR.h"
 
 // Initialize encoders
 #define cartEncoderPhaseA 3
@@ -22,6 +23,7 @@ const double ANGLE_BOUND = 30.0 * (PI / 180.0); // radians
 double previousCartPosition = 0.0;              // meters
 double previousPendulumAngle = PI;              // radians
 unsigned long previousMilliseconds = 0;
+stateVector state;
 
 void setup()
 {
@@ -36,17 +38,16 @@ void setup()
 void loop()
 {
 
+  double controlInput; // voltage
   unsigned long currentMilliseconds = millis();
   long cartEncoderCount = cartEncoder.read();
   long pendulumEncoderCount = pendulumEncoder.read();
-  double controlInput; // voltage
 
   // Send values to python every n milliseconds
   if ((currentMilliseconds - previousMilliseconds) >= TIMEFRAME)
   {
 
     // Compute the state
-    stateVector state;
     state.pendulumAngle = encoderCountToPendulumAngleRadians(pendulumEncoderCount, ENCODER_PPR);          // radians
     state.cartPosition = encoderCountToCartPosition(cartEncoderCount, ENCODER_PPR, IDLER_PULLEY_RADIUS);  // meters
     state.pendulumAngularVelocity = (state.pendulumAngle - previousPendulumAngle) / (TIMEFRAME / 1000.0); // radians/s
