@@ -4,11 +4,11 @@
 
 class EncoderWrapper {
     private:
+        Encoder &encoder;
         const double pulsePerRevolution;
-        Encoder encoder;
 
     public:
-        EncoderWrapper(Encoder e, double PPR);
+        EncoderWrapper(Encoder &e, double PPR);
         long read();
         double readRadians();
         double getPulsePerRevolution();

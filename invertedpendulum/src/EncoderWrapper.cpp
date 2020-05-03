@@ -1,6 +1,6 @@
 #include "EncoderWrapper.hpp"
 
-EncoderWrapper::EncoderWrapper(Encoder e, double PPR) : encoder(e), pulsePerRevolution(PPR) {}; 
+EncoderWrapper::EncoderWrapper(Encoder &e, double PPR) : encoder(e), pulsePerRevolution(PPR) {}; 
 
 long EncoderWrapper::read() {
     return encoder.read();
