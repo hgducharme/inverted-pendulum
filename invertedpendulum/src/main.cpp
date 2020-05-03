@@ -34,7 +34,7 @@ Encoder c(pins::cartEncoderPhaseA, pins::cartEncoderPhaseB);
 Encoder p(pins::pendulumEncoderPhaseA, pins::pendulumEncoderPhaseB);
 EncoderWrapper cartEncoder(c, constants::ENCODER_PPR);
 EncoderWrapper pendulumEncoder(p, constants::ENCODER_PPR);
-DrokL928 motorController(pins::motorIN1, pins::motorIN2, pins::motorENA);
+IMotorController *motorController  = new DrokL928(pins::motorIN1, pins::motorIN2, pins::motorENA);
 
 // Initialize application layer objects
 Cart cart(motorController);
