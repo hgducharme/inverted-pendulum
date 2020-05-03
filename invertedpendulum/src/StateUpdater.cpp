@@ -2,7 +2,7 @@
 
 StateUpdater::StateUpdater(EncoderWrapper &c, EncoderWrapper &p, double pulleyRadius, double loopRate) : IDLER_PULLEY_RADIUS(pulleyRadius), SYSTEM_LOOP_RATE_SECONDS(loopRate / 1000), cartEncoder(c), pendulumEncoder(p) {};
 
-void StateUpdater::update(StateVector & state, StateVector & previousState) {
+void StateUpdater::update(StateVector &state, const StateVector &previousState) {
     state.pendulumAngle = calculatePendulumAngle();
     state.cartPosition = calculateCartPosition();
     state.pendulumAngularVelocity = calculatePendulumAngularVelocity(state.pendulumAngle, previousState.pendulumAngle);

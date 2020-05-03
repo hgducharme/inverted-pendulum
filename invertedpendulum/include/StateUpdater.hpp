@@ -12,7 +12,7 @@ class StateUpdater {
 
     public:
         StateUpdater(EncoderWrapper &c, EncoderWrapper &p, double pulleyRadius, double loopRate);
-        void update(StateVector &state, StateVector &previousState);
+        void update(StateVector &state, const StateVector &previousState);
 
     private:
         double calculatePendulumAngle();
