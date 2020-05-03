@@ -10,7 +10,7 @@ class DrokL928 : public IMotorController {
         const int motorENA;
 
     public:
-        DrokL928(const int _IN1, const int _IN2, const int _ENA);
+        DrokL928(int _IN1, int _IN2, int _ENA);
         virtual void registerPinsWithArduino();
         virtual void rotateMotorClockwise(double dutyCyclePWM);
         virtual void rotateMotorCounterClockwise(double dutyCyclePWM);

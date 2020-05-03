@@ -1,6 +1,6 @@
 #include "DrokL928.hpp"
 
-DrokL928::DrokL928(const int _IN1, const int _IN2, const int _ENA) : 
+DrokL928::DrokL928(int _IN1, int _IN2, int _ENA) : 
     motorIN1(_IN1), motorIN2(_IN2), motorENA(_ENA) {
 
 };
