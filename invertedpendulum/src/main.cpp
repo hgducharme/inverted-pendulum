@@ -9,6 +9,7 @@
 #include "Cart.hpp"
 #include "EncoderWrapper.hpp"
 #include "StateUpdater.hpp"
+#include "IMotorController.hpp"
 
 namespace pins {
 	static const int cartEncoderPhaseA = 3;
@@ -34,10 +35,10 @@ Encoder c(pins::cartEncoderPhaseA, pins::cartEncoderPhaseB);
 Encoder p(pins::pendulumEncoderPhaseA, pins::pendulumEncoderPhaseB);
 EncoderWrapper cartEncoder(c, constants::ENCODER_PPR);
 EncoderWrapper pendulumEncoder(p, constants::ENCODER_PPR);
-IMotorController *motorController  = new DrokL928(pins::motorIN1, pins::motorIN2, pins::motorENA);
+IMotorController *motorController = (IMotorController*)new DrokL928(pins::motorIN1, pins::motorIN2, pins::motorENA);
 
 // Initialize application layer objects
-Cart cart(motorController);
+Cart cart(*motorController);
 double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
 LQRController LQR(gainVector);
 StateVector state(0, 0, 5, 6);
@@ -48,7 +49,7 @@ void setup()
 {
   Serial.begin(9400);
 
-  motorController.registerPinsWithArduino();
+  motorController->registerPinsWithArduino();
 }
 
 void loop()

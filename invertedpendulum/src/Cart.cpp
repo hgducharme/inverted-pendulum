@@ -1,17 +1,17 @@
 #include "Cart.hpp"
 
-Cart::Cart(IMotorController * m) : motorController(m) {};
+Cart::Cart(IMotorController &m) : motorController(m) {};
 
 void Cart::moveLeft(double dutyCyclePWM) {
-    motorController->rotateMotorClockwise(dutyCyclePWM);
+    motorController.rotateMotorClockwise(dutyCyclePWM);
 }
 
 void Cart::moveRight(double dutyCyclePWM) {
-    motorController->rotateMotorCounterClockwise(dutyCyclePWM);
+    motorController.rotateMotorCounterClockwise(dutyCyclePWM);
 }
 
 void Cart::brake() {
-    motorController->stopMotor();
+    motorController.stopMotor();
 }
 
 void Cart::dispatch(double controlInput) {
