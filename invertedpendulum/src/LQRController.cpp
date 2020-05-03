@@ -5,7 +5,7 @@ LQRController::LQRController(double (&array)[4]) : gainVector(array)
     lengthOfGainVector = sizeof(array) / sizeof(array[0]);
 }
 
-double LQRController::computeControlInput(double (&stateVector)[2])
+double LQRController::computeInput(double (&stateVector)[4])
 {
 
     // validateStateVectorLength(stateVector);

@@ -8,5 +8,5 @@ private:
 
 public:
     LQRController(double (&gainVector)[4]);
-    double computeControlInput(double (&stateVector)[2]);
+    double computeInput(double (&stateVector)[4]);
 };
