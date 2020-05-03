@@ -1,7 +1,6 @@
 #include "StateUpdater.hpp"
 
-StateUpdater::StateUpdater(EncoderWrapper & c, EncoderWrapper & p, double pulleyRadius, double loopRate) : 
-    cartEncoder(c), pendulumEncoder(p), IDLER_PULLEY_RADIUS(pulleyRadius), SYSTEM_LOOP_RATE_SECONDS(loopRate / 1000) {};
+StateUpdater::StateUpdater(EncoderWrapper &c, EncoderWrapper &p, double pulleyRadius, double loopRate) : IDLER_PULLEY_RADIUS(pulleyRadius), SYSTEM_LOOP_RATE_SECONDS(loopRate / 1000), cartEncoder(c), pendulumEncoder(p) {};
 
 void StateUpdater::update(StateVector & state, StateVector & previousState) {
     state.pendulumAngle = calculatePendulumAngle();
