@@ -18,17 +18,6 @@
 const int motorChannelIN1 = 7;
 const int motorChannelIN2 = 8;
 const int motorChannelENA = 9;
-double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
-
-DrokL928 motorController(motorChannelIN1, motorChannelIN2, motorChannelENA);
-Cart cart(&motorController);
-
-Encoder ce(cartEncoderPhaseA, cartEncoderPhaseB);
-Encoder pe(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
-EncoderWrapper cartEncoder(ce, ENCODER_PPR);
-EncoderWrapper pendulumEncoder(pe, ENCODER_PPR);
-
-LQRController LQR(gainVector);
 
 // Initialize variables and named constants
 const double ENCODER_PPR = 2400.0;
@@ -38,7 +27,17 @@ const double ANGLE_BOUND = 30.0 * (PI / 180.0); // radians
 double previousCartPosition = 0.0;              // meters
 double previousPendulumAngle = PI;              // radians
 unsigned long previousMilliseconds = 0;
+double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
+
+LQRController LQR(gainVector);
 StateVector state(0, 0, 5, 6);
+DrokL928 motorController(motorChannelIN1, motorChannelIN2, motorChannelENA);
+Cart cart(&motorController);
+
+Encoder ce(cartEncoderPhaseA, cartEncoderPhaseB);
+Encoder pe(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
+EncoderWrapper cartEncoder(ce, ENCODER_PPR);
+EncoderWrapper pendulumEncoder(pe, ENCODER_PPR);
 
 void setup()
 {
