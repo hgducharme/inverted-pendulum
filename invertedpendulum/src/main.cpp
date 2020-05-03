@@ -12,6 +12,8 @@
 #define pendulumEncoderPhaseA 2
 #define pendulumEncoderPhaseB 5
 
+double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
+LQRController LQR(gainVector);
 Encoder cartEncoder(cartEncoderPhaseA, cartEncoderPhaseB);
 Encoder pendulumEncoder(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
 
