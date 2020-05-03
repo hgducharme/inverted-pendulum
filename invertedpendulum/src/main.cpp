@@ -6,6 +6,7 @@
 #include "utils/utilsLQR.h"
 #include "StateVector.h"
 #include "DrokL928.hpp"
+#include "Cart.hpp"
 
 // Initialize encoders
 #define cartEncoderPhaseA 3
@@ -22,6 +23,7 @@ DrokL928 motorController(motorChannelIN1, motorChannelIN2, motorChannelENA);
 Encoder cartEncoder(cartEncoderPhaseA, cartEncoderPhaseB);
 Encoder pendulumEncoder(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
 LQRController LQR(gainVector);
+Cart cart(&motorController);
 
 // Initialize variables and named constants
 const double ENCODER_PPR = 2400.0;
@@ -61,26 +63,7 @@ void loop()
     // Compute control input using LQR and handle saturation
     // NOTE: A PWM value of 35 is essentially the lowest value to start moving the cart due to friction
     controlInput = computeControlInput(state, ANGLE_BOUND);
-    double mappedInput = map(abs(controlInput), 0, 1000, 20, 255);
-
-    if (mappedInput > 255)
-    {
-      mappedInput = 255;
-    }
-
-    // Move the cart based on the computed input
-    if (controlInput < 0)
-    {
-      motorController.moveCartLeft(mappedInput);
-    }
-    else if (controlInput > 0)
-    {
-      motorController.moveCartRight(mappedInput);
-    }
-    else
-    {
-      motorController.brake();
-    }
+    cart.dispatch(controlInput);
 
     // Store the current data for computation in the next loop
     previousMilliseconds = currentMilliseconds;

@@ -32,18 +32,6 @@ void DrokL928::stopMotor()
     delay(130);
 }
 
-void DrokL928::moveCartRight(double dutyCyclePWM) {
-    rotateMotorCounterClockwise(dutyCyclePWM);
-}
-
-void DrokL928::moveCartLeft(double dutyCyclePWM) {
-    rotateMotorClockwise(dutyCyclePWM);
-}
-
-void DrokL928::brake() {
-    stopMotor();
-}
-
 void DrokL928::testMotor() {
     rotateMotorClockwise(35);
     delay(100);
