@@ -1,19 +1,13 @@
 #ifndef UTILS_LQR
 #define UTILS_LQR
 
-struct stateVector
-{
-    double pendulumAngle;
-    double cartPosition;
-    double pendulumAngularVelocity = 6.0;
-    double cartVelocity = 5.0;
-};
+#include "StateVector.h"
 
 double normalizeAngle(double angle);
 double encoderCountToAngleRadians(long encoderCount, double encoderPPR);
 double encoderCountToPendulumAngleRadians(long encoderCount, double encoderPPR);
 double encoderCountToCartPosition(long cartEncoderCount, const double encoderPPR, const double idlerPulleyRadius);
-double computeControlInput(stateVector state);
+double computeControlInput(StateVector state);
 
 double normalizeAngle(double angle)
 {
@@ -46,7 +40,7 @@ double encoderCountToCartPosition(long cartEncoderCount, const double encoderPPR
     return idlerPulleyRadius * cartAngle;
 }
 
-double computeControlInput(stateVector state, double bound)
+double computeControlInput(StateVector state, double bound)
 {
     double gainVector[4] = {-2000.0, 900.0,  -100.0, 300.0};
 

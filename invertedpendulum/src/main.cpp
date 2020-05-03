@@ -26,7 +26,7 @@ const double ANGLE_BOUND = 30.0 * (PI / 180.0); // radians
 double previousCartPosition = 0.0;              // meters
 double previousPendulumAngle = PI;              // radians
 unsigned long previousMilliseconds = 0;
-stateVector state;
+StateVector state(0, 0, 5, 6);
 
 void setup()
 {
