@@ -15,6 +15,7 @@ void Cart::brake() {
 }
 
 void Cart::dispatch(double controlInput) {
+    // NOTE: A PWM value of 35 is essentially the lowest value to start moving the cart due to friction
     double mappedInput = map(abs(controlInput), 0, 1000, 20, 255);
 
     if (mappedInput > 255)
