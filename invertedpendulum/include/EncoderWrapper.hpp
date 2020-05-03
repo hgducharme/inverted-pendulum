@@ -10,5 +10,6 @@ class EncoderWrapper {
     public:
         EncoderWrapper(Encoder e, double PPR);
         long read();
+        double readRadians();
         double getPulsePerRevolution();
 };
