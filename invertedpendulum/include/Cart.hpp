@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 class Cart {
-    const IMotorController * motorController;
+    IMotorController * motorController;
 
     public:
         Cart(IMotorController * motorController);
