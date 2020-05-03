@@ -2,10 +2,10 @@
 #include <Arduino.h>
 #include <Encoder.h>
 #include <math.h>
-#include "motorControllerDrokL298.h"
 #include "LQRController.h"
 #include "utils/utilsLQR.h"
 #include "StateVector.h"
+#include "DrokL928.hpp"
 
 // Initialize encoders
 #define cartEncoderPhaseA 3
@@ -13,10 +13,15 @@
 #define pendulumEncoderPhaseA 2
 #define pendulumEncoderPhaseB 5
 
+const int motorChannelIN1 = 7;
+const int motorChannelIN2 = 8;
+const int motorChannelENA = 9;
 double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
-LQRController LQR(gainVector);
+
+DrokL928 motorController(motorChannelIN1, motorChannelIN2, motorChannelENA);
 Encoder cartEncoder(cartEncoderPhaseA, cartEncoderPhaseB);
 Encoder pendulumEncoder(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
+LQRController LQR(gainVector);
 
 // Initialize variables and named constants
 const double ENCODER_PPR = 2400.0;
@@ -32,10 +37,7 @@ void setup()
 {
   Serial.begin(9400);
 
-  // Motor controller
-  pinMode(IN1, OUTPUT);
-  pinMode(IN2, OUTPUT);
-  pinMode(ENA, OUTPUT);
+  motorController.registerPinsWithArduino();
 }
 
 void loop()
@@ -69,15 +71,15 @@ void loop()
     // Move the cart based on the computed input
     if (controlInput < 0)
     {
-      moveCart('L', mappedInput);
+      motorController.moveCartLeft(mappedInput);
     }
     else if (controlInput > 0)
     {
-      moveCart('R', mappedInput);
+      motorController.moveCartRight(mappedInput);
     }
     else
     {
-      brake();
+      motorController.brake();
     }
 
     // Store the current data for computation in the next loop
