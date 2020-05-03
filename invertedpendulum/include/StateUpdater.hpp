@@ -1,6 +1,6 @@
 #pragma once
 
-#include "StateVector.h"
+#include "StateVector.hpp"
 #include "EncoderWrapper.hpp"
 
 class StateUpdater {

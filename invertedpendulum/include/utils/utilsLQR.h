@@ -1,7 +1,7 @@
 #ifndef UTILS_LQR
 #define UTILS_LQR
 
-#include "StateVector.h"
+#include "StateVector.hpp"
 
 double normalizeAngle(double angle);
 double encoderCountToAngleRadians(long encoderCount, double encoderPPR);

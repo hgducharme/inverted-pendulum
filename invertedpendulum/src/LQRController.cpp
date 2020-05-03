@@ -1,4 +1,4 @@
-#include "LQRController.h"
+#include "LQRController.hpp"
 
 LQRController::LQRController(double (&array)[4]) : gainVector(array)
 {

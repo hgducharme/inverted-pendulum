@@ -2,9 +2,9 @@
 #include <Arduino.h>
 #include <Encoder.h>
 #include <math.h>
-#include "LQRController.h"
+#include "LQRController.hpp"
 #include "utils/utilsLQR.h"
-#include "StateVector.h"
+#include "StateVector.hpp"
 #include "DrokL928.hpp"
 #include "Cart.hpp"
 #include "EncoderWrapper.hpp"
