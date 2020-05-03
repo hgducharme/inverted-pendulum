@@ -4,7 +4,8 @@
 #include <math.h>
 #include "motorControllerDrokL298.h"
 #include "LQRController.h"
-#include "utilsLQR.h"
+#include "utils/utilsLQR.h"
+#include "StateVector.h"
 
 // Initialize encoders
 #define cartEncoderPhaseA 3
