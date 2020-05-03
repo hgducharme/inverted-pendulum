@@ -4,7 +4,7 @@ class IMotorController {
     public:
         IMotorController() {};
         virtual ~IMotorController() {};
-        virtual void rotateMotorClockwise(double voltage) = 0;
-        virtual void rotateMotorCounterClockwise(double voltage) = 0;
+        virtual void rotateMotorClockwise(double dutyCyclePWM) = 0;
+        virtual void rotateMotorCounterClockwise(double dutyCyclePWM) = 0;
         virtual void stopMotor() = 0;
 };

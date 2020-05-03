@@ -11,17 +11,17 @@ void DrokL928::registerPinsWithArduino() {
     pinMode(motorChannelENA, OUTPUT);
 }
 
-void DrokL928::rotateMotorClockwise(double voltage) {
+void DrokL928::rotateMotorClockwise(double dutyCyclePWM) {
     digitalWrite(motorChannelIN1, HIGH); // Negative terminal
     digitalWrite(motorChannelIN2, LOW);  // Positive terminal
-    analogWrite(motorChannelENA, voltage);
+    analogWrite(motorChannelENA, dutyCyclePWM);
 }
 
-void DrokL928::rotateMotorCounterClockwise(double voltage)
+void DrokL928::rotateMotorCounterClockwise(double dutyCyclePWM)
 {
     digitalWrite(motorChannelIN1, LOW);  // Negative terminal
     digitalWrite(motorChannelIN2, HIGH); // Positive terminal
-    analogWrite(motorChannelENA, voltage);
+    analogWrite(motorChannelENA, dutyCyclePWM);
 }
 
 void DrokL928::stopMotor()
@@ -32,12 +32,12 @@ void DrokL928::stopMotor()
     delay(130);
 }
 
-void DrokL928::moveCartRight(double voltage) {
-    rotateMotorCounterClockwise(voltage);
+void DrokL928::moveCartRight(double dutyCyclePWM) {
+    rotateMotorCounterClockwise(dutyCyclePWM);
 }
 
-void DrokL928::moveCartLeft(double voltage) {
-    rotateMotorClockwise(voltage);
+void DrokL928::moveCartLeft(double dutyCyclePWM) {
+    rotateMotorClockwise(dutyCyclePWM);
 }
 
 void DrokL928::brake() {
