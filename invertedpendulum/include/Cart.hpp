@@ -4,10 +4,10 @@
 #include <Arduino.h>
 
 class Cart {
-    IMotorController * motorController;
+    IMotorController & motorController;
 
     public:
-        Cart(IMotorController * motorController);
+        Cart(IMotorController & motorController);
         void moveLeft(double dutyCyclePWM);
         void moveRight(double dutyCyclePWM);
         void brake();

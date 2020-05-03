@@ -37,7 +37,7 @@ EncoderWrapper pendulumEncoder(p, constants::ENCODER_PPR);
 DrokL928 motorController(pins::motorIN1, pins::motorIN2, pins::motorENA);
 
 // Initialize application layer objects
-Cart cart(&motorController);
+Cart cart(motorController);
 double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
 LQRController LQR(gainVector);
 StateVector state(0, 0, 5, 6);
