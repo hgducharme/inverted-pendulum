@@ -10,38 +10,39 @@
 #include "EncoderWrapper.hpp"
 #include "StateUpdater.hpp"
 
-// Define pins
-#define cartEncoderPhaseA 3
-#define cartEncoderPhaseB 4
-#define pendulumEncoderPhaseA 2
-#define pendulumEncoderPhaseB 5
-const int motorChannelIN1 = 7;
-const int motorChannelIN2 = 8;
-const int motorChannelENA = 9;
+namespace pins {
+	static const int cartEncoderPhaseA = 3;
+	static const int cartEncoderPhaseB = 4;
+	static const int pendulumEncoderPhaseA = 2;
+	static const int pendulumEncoderPhaseB = 5;
+	static const int motorChannelIN1 = 7;
+	static const int motorChannelIN2 = 8;
+	static const int motorChannelENA = 9;
+};
 
-// Initialize variables and named constants
-const double ENCODER_PPR = 2400.0;
-const double IDLER_PULLEY_RADIUS = 0.0048006;   // meters
-const unsigned long LOOP_RATE = 3;              // milliseconds
-const double ANGLE_BOUND = 30.0 * (PI / 180.0); // radians
+namespace constants {
+	static const double ENCODER_PPR = 2400.0;
+	static const double IDLER_PULLEY_RADIUS = 0.0048006;   // meters
+	static const unsigned long LOOP_RATE = 3;              // milliseconds
+	static const double ANGLE_BOUND = 30.0 * (PI / 180.0); // radians
+}
+
 unsigned long previousMilliseconds = 0;
-double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
 
 // Initialize hardware layer objects
-Encoder c(cartEncoderPhaseA, cartEncoderPhaseB);
-Encoder p(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
-EncoderWrapper cartEncoder(c, ENCODER_PPR);
-EncoderWrapper pendulumEncoder(p, ENCODER_PPR);
-DrokL928 motorController(motorChannelIN1, motorChannelIN2, motorChannelENA);
+Encoder c(pins::cartEncoderPhaseA, pins::cartEncoderPhaseB);
+Encoder p(pins::pendulumEncoderPhaseA, pins::pendulumEncoderPhaseB);
+EncoderWrapper cartEncoder(c, constants::ENCODER_PPR);
+EncoderWrapper pendulumEncoder(p, constants::ENCODER_PPR);
+DrokL928 motorController(pins::motorChannelIN1, pins::motorChannelIN2, pins::motorChannelENA);
 
 // Initialize application layer objects
 Cart cart(&motorController);
+double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
 LQRController LQR(gainVector);
 StateVector state(0, 0, 5, 6);
 StateVector previousState(0, 0, 0, PI);
-StateUpdater stateCalculator(cartEncoder, pendulumEncoder, IDLER_PULLEY_RADIUS, LOOP_RATE);
-// TODO:
-// Scheduler?
+StateUpdater stateCalculator(cartEncoder, pendulumEncoder, constants::IDLER_PULLEY_RADIUS, constants::LOOP_RATE);
 
 void setup()
 {
@@ -55,15 +56,13 @@ void loop()
 
   double controlInput; // voltage
   unsigned long currentMilliseconds = millis();
-  long cartEncoderCount = cartEncoder.read();
-  long pendulumEncoderCount = pendulumEncoder.read();
 
   // Send values to python every n milliseconds
-  if ((currentMilliseconds - previousMilliseconds) >= LOOP_RATE)
+  if ((currentMilliseconds - previousMilliseconds) >= constants::LOOP_RATE)
   {
 
     stateCalculator.update(state, previousState);
-    controlInput = computeControlInput(state, ANGLE_BOUND);
+    controlInput = computeControlInput(state, constants::ANGLE_BOUND);
     cart.dispatch(controlInput);
 
     // Store the current data for computation in the next loop
