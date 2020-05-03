@@ -1,34 +1,34 @@
 #include "DrokL928.hpp"
 
 DrokL928::DrokL928(const int _IN1, const int _IN2, const int _ENA) : 
-    motorChannelIN1(_IN1), motorChannelIN2(_IN2), motorChannelENA(_ENA) {
+    motorIN1(_IN1), motorIN2(_IN2), motorENA(_ENA) {
 
 };
 
 void DrokL928::registerPinsWithArduino() {
-    pinMode(motorChannelIN1, OUTPUT);
-    pinMode(motorChannelIN2, OUTPUT);
-    pinMode(motorChannelENA, OUTPUT);
+    pinMode(motorIN1, OUTPUT);
+    pinMode(motorIN2, OUTPUT);
+    pinMode(motorENA, OUTPUT);
 }
 
 void DrokL928::rotateMotorClockwise(double dutyCyclePWM) {
-    digitalWrite(motorChannelIN1, HIGH); // Negative terminal
-    digitalWrite(motorChannelIN2, LOW);  // Positive terminal
-    analogWrite(motorChannelENA, dutyCyclePWM);
+    digitalWrite(motorIN1, HIGH); // Negative terminal
+    digitalWrite(motorIN2, LOW);  // Positive terminal
+    analogWrite(motorENA, dutyCyclePWM);
 }
 
 void DrokL928::rotateMotorCounterClockwise(double dutyCyclePWM)
 {
-    digitalWrite(motorChannelIN1, LOW);  // Negative terminal
-    digitalWrite(motorChannelIN2, HIGH); // Positive terminal
-    analogWrite(motorChannelENA, dutyCyclePWM);
+    digitalWrite(motorIN1, LOW);  // Negative terminal
+    digitalWrite(motorIN2, HIGH); // Positive terminal
+    analogWrite(motorENA, dutyCyclePWM);
 }
 
 void DrokL928::stopMotor()
 {
-    digitalWrite(motorChannelIN1, LOW);
-    digitalWrite(motorChannelIN2, LOW);
-    analogWrite(motorChannelENA, 0);
+    digitalWrite(motorIN1, LOW);
+    digitalWrite(motorIN2, LOW);
+    analogWrite(motorENA, 0);
     delay(130);
 }
 

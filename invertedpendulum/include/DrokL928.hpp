@@ -5,9 +5,9 @@
 
 class DrokL928 : public IMotorController {
     private:
-        const int motorChannelIN1;
-        const int motorChannelIN2;
-        const int motorChannelENA;
+        const int motorIN1;
+        const int motorIN2;
+        const int motorENA;
 
     public:
         DrokL928(const int _IN1, const int _IN2, const int _ENA);

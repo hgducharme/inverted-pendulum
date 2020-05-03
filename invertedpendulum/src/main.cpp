@@ -15,9 +15,9 @@ namespace pins {
 	static const int cartEncoderPhaseB = 4;
 	static const int pendulumEncoderPhaseA = 2;
 	static const int pendulumEncoderPhaseB = 5;
-	static const int motorChannelIN1 = 7;
-	static const int motorChannelIN2 = 8;
-	static const int motorChannelENA = 9;
+	static const int motorIN1 = 7;
+	static const int motorIN2 = 8;
+	static const int motorENA = 9;
 };
 
 namespace constants {
@@ -34,7 +34,7 @@ Encoder c(pins::cartEncoderPhaseA, pins::cartEncoderPhaseB);
 Encoder p(pins::pendulumEncoderPhaseA, pins::pendulumEncoderPhaseB);
 EncoderWrapper cartEncoder(c, constants::ENCODER_PPR);
 EncoderWrapper pendulumEncoder(p, constants::ENCODER_PPR);
-DrokL928 motorController(pins::motorChannelIN1, pins::motorChannelIN2, pins::motorChannelENA);
+DrokL928 motorController(pins::motorIN1, pins::motorIN2, pins::motorENA);
 
 // Initialize application layer objects
 Cart cart(&motorController);
