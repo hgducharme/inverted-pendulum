@@ -7,6 +7,7 @@
 #include "StateVector.h"
 #include "DrokL928.hpp"
 #include "Cart.hpp"
+#include "EncoderWrapper.hpp"
 
 // Initialize encoders
 #define cartEncoderPhaseA 3
@@ -20,10 +21,14 @@ const int motorChannelENA = 9;
 double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
 
 DrokL928 motorController(motorChannelIN1, motorChannelIN2, motorChannelENA);
-Encoder cartEncoder(cartEncoderPhaseA, cartEncoderPhaseB);
-Encoder pendulumEncoder(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
-LQRController LQR(gainVector);
 Cart cart(&motorController);
+
+Encoder ce(cartEncoderPhaseA, cartEncoderPhaseB);
+Encoder pe(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
+EncoderWrapper cartEncoder(ce, ENCODER_PPR);
+EncoderWrapper pendulumEncoder(pe, ENCODER_PPR);
+
+LQRController LQR(gainVector);
 
 // Initialize variables and named constants
 const double ENCODER_PPR = 2400.0;
