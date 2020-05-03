@@ -8,6 +8,7 @@
 #include "DrokL928.hpp"
 #include "Cart.hpp"
 #include "EncoderWrapper.hpp"
+#include "StateUpdater.hpp"
 
 // Define pins
 #define cartEncoderPhaseA 3
@@ -27,10 +28,10 @@ unsigned long previousMilliseconds = 0;
 double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
 
 // Initialize hardware layer objects
-Encoder ce(cartEncoderPhaseA, cartEncoderPhaseB);
-Encoder pe(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
-EncoderWrapper cartEncoder(ce, ENCODER_PPR);
-EncoderWrapper pendulumEncoder(pe, ENCODER_PPR);
+Encoder c(cartEncoderPhaseA, cartEncoderPhaseB);
+Encoder p(pendulumEncoderPhaseA, pendulumEncoderPhaseB);
+EncoderWrapper cartEncoder(c, ENCODER_PPR);
+EncoderWrapper pendulumEncoder(p, ENCODER_PPR);
 DrokL928 motorController(motorChannelIN1, motorChannelIN2, motorChannelENA);
 
 // Initialize application layer objects
@@ -38,9 +39,9 @@ Cart cart(&motorController);
 LQRController LQR(gainVector);
 StateVector state(0, 0, 5, 6);
 StateVector previousState(0, 0, 0, PI);
+StateUpdater stateCalculator(cartEncoder, pendulumEncoder, IDLER_PULLEY_RADIUS, LOOP_RATE);
 // TODO:
 // Scheduler?
-// StateCalculator?
 
 void setup()
 {
@@ -61,14 +62,7 @@ void loop()
   if ((currentMilliseconds - previousMilliseconds) >= LOOP_RATE)
   {
 
-    // Compute the state
-    state.pendulumAngle = encoderCountToPendulumAngleRadians(pendulumEncoderCount, ENCODER_PPR);          // radians
-    state.cartPosition = encoderCountToCartPosition(cartEncoderCount, ENCODER_PPR, IDLER_PULLEY_RADIUS);  // meters
-    state.pendulumAngularVelocity = (state.pendulumAngle - previousState.pendulumAngle) / (LOOP_RATE / 1000.0); // radians/s
-    state.cartVelocity = (state.cartPosition - previousState.cartPosition) / (LOOP_RATE / 1000.0);              // meters/s
-
-    // Compute control input using LQR and handle saturation
-    // NOTE: A PWM value of 35 is essentially the lowest value to start moving the cart due to friction
+    stateCalculator.update(state, previousState);
     controlInput = computeControlInput(state, ANGLE_BOUND);
     cart.dispatch(controlInput);
 
