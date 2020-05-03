@@ -6,3 +6,7 @@ long EncoderWrapper::read() {
     long value = encoder.read();
     return value;
 }
+
+double EncoderWrapper::getPulsePerRevolution() {
+    return pulsePerRevolution;
+}
