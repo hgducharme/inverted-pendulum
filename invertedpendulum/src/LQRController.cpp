@@ -11,7 +11,7 @@ double LQRController::computeControlInput(const StateVector &state)
     double controlInput = 0.0;
 
     if (abs(state.pendulumAngle) <= pendulumBound) {
-        double controlInput = (gainVector[0] * state.pendulumAngle) + (gainVector[1] * state.cartPosition) + (gainVector[2] * state.pendulumAngularVelocity) + (gainVector[3] * state.cartVelocity);
+        controlInput = (gainVector[0] * state.pendulumAngle) + (gainVector[1] * state.cartPosition) + (gainVector[2] * state.pendulumAngularVelocity) + (gainVector[3] * state.cartVelocity);
     }
 
     return controlInput;
