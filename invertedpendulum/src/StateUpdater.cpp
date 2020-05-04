@@ -37,3 +37,8 @@ double StateUpdater::calculatePendulumAngularVelocity(double currentPendulumAngl
 double StateUpdater::calculateCartVelocity(double currentCartPosition, double previousCartPosition) {
     return (currentCartPosition - previousCartPosition) / SYSTEM_LOOP_RATE_SECONDS;
 }
+
+void StateUpdater::archiveCurrentState(const StateVector &currentState, StateVector &previousState) {
+    previousState.pendulumAngle = currentState.pendulumAngle;
+    previousState.cartPosition = currentState.cartPosition;
+}

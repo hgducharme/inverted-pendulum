@@ -13,8 +13,9 @@ class StateUpdater {
     public:
         StateUpdater(EncoderWrapper &c, EncoderWrapper &p, double pulleyRadius, double loopRate);
         void update(StateVector &state, const StateVector &previousState);
+        void archiveCurrentState(const StateVector &currentState, StateVector &previousState);
 
-    private:
+        private: 
         double calculatePendulumAngle();
         double calculateCartPosition();
         double calculatePendulumAngularVelocity(double currentPendulumAngle, double previousPendulumAngle);
