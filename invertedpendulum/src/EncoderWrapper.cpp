@@ -9,7 +9,3 @@ long EncoderWrapper::read() {
 double EncoderWrapper::readRadians() {
     return (read() / pulsePerRevolution) * (2.0 * PI);
 }
-
-double EncoderWrapper::getPulsePerRevolution() {
-    return pulsePerRevolution;
-}

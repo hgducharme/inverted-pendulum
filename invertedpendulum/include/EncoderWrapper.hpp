@@ -11,5 +11,4 @@ class EncoderWrapper {
         EncoderWrapper(Encoder &e, double PPR);
         long read();
         double readRadians();
-        double getPulsePerRevolution();
 };
