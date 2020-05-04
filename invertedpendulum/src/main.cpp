@@ -3,7 +3,6 @@
 #include <Encoder.h>
 #include <math.h>
 #include "LQRController.hpp"
-#include "utils/utilsLQR.h"
 #include "StateVector.hpp"
 #include "DrokL928.hpp"
 #include "Cart.hpp"
@@ -26,6 +25,7 @@ namespace constants {
 	static const double IDLER_PULLEY_RADIUS = 0.0048006;   // meters
 	static const unsigned long LOOP_RATE = 3;              // milliseconds
 	static const double ANGLE_BOUND = 30.0 * (PI / 180.0); // radians
+  double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
 }
 
 unsigned long previousMilliseconds = 0;
@@ -39,8 +39,7 @@ IMotorController *motorController = (IMotorController*)new DrokL928(pins::motorI
 
 // Initialize application layer objects
 Cart cart(*motorController);
-double gainVector[4] = {-2000.0, 900.0, -100.0, 300.0};
-LQRController LQR(gainVector);
+LQRController LQR(constants::gainVector, constants::ANGLE_BOUND);
 StateVector state(0, 0, 5, 6);
 StateVector previousState(0, 0, 0, PI);
 StateUpdater stateCalculator(cartEncoder, pendulumEncoder, constants::IDLER_PULLEY_RADIUS, constants::LOOP_RATE);
@@ -55,15 +54,13 @@ void setup()
 void loop()
 {
 
-  double controlInput; // voltage
+  // Run the loop every n milliseconds
   unsigned long currentMilliseconds = millis();
-
-  // Send values to python every n milliseconds
   if ((currentMilliseconds - previousMilliseconds) >= constants::LOOP_RATE)
   {
 
     stateCalculator.update(state, previousState);
-    controlInput = computeControlInput(state, constants::ANGLE_BOUND);
+    double controlInput = LQR.computeControlInput(state);
     cart.dispatch(controlInput);
 
     // Store the current data for computation in the next loop

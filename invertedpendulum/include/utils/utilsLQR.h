@@ -2,6 +2,7 @@
 #define UTILS_LQR
 
 #include "StateVector.hpp"
+#include "<math.h>"
 
 double normalizeAngle(double angle);
 double encoderCountToAngleRadians(long encoderCount, double encoderPPR);
@@ -40,7 +41,7 @@ double encoderCountToCartPosition(long cartEncoderCount, const double encoderPPR
     return idlerPulleyRadius * cartAngle;
 }
 
-double computeControlInput(StateVector state, double bound)
+double computeControl(StateVector state, double bound)
 {
     double gainVector[4] = {-2000.0, 900.0,  -100.0, 300.0};
 

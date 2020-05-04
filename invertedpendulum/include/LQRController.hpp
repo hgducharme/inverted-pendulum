@@ -1,12 +1,16 @@
 #pragma once
 
+#include <math.h>
+#include "StateUpdater.hpp"
+
 class LQRController
 {
 private:
     double (&gainVector)[4];
-    int lengthOfGainVector;
+    double lengthOfGainVector;
+    double pendulumBound;
 
 public:
-    LQRController(double (&gainVector)[4]);
-    double computeInput(double (&stateVector)[4]);
+    LQRController(double (&arr)[4], double bound);
+    double computeControlInput(const StateVector &state);
 };

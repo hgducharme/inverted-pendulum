@@ -1,21 +1,18 @@
 #include "LQRController.hpp"
 
-LQRController::LQRController(double (&array)[4]) : gainVector(array)
+LQRController::LQRController(double (&arr)[4], double bound) : gainVector(arr)
 {
-    lengthOfGainVector = sizeof(array) / sizeof(array[0]);
+    lengthOfGainVector = sizeof(gainVector) / sizeof(gainVector[0]);
+    pendulumBound = bound;
 }
 
-double LQRController::computeInput(double (&stateVector)[4])
+double LQRController::computeControlInput(const StateVector &state)
 {
+    double controlInput = 0.0;
 
-    // validateStateVectorLength(stateVector);
-
-    double controlInput;
-
-    for (int i = 0; i < lengthOfGainVector; i++) 
-    {
-        controlInput += (gainVector[i] * stateVector[i]);
+    if (abs(state.pendulumAngle) <= pendulumBound) {
+        double controlInput = (gainVector[0] * state.pendulumAngle) + (gainVector[1] * state.cartPosition) + (gainVector[2] * state.pendulumAngularVelocity) + (gainVector[3] * state.cartVelocity);
     }
-    
+
     return controlInput;
 }
