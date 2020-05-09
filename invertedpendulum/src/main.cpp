@@ -65,9 +65,6 @@ void loop()
 
     // Store the current data for computation in the next loop
     previousMilliseconds = currentMilliseconds;
-
-    // TODO: previousState.store(currentState) ?
-    previousState.pendulumAngle = state.pendulumAngle;
-    previousState.cartPosition = state.cartPosition;
+    stateCalculator.archiveCurrentState(state, previousState);
   }
 }
