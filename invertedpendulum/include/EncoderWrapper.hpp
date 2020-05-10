@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Encoder.h"
+#include <Encoder.h>
 
 class EncoderWrapper {
     private:
