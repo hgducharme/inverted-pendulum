@@ -1,7 +1,7 @@
 #pragma once
 
 #include <math.h>
-#include "StateUpdater.hpp"
+#include "StateVector.hpp"
 
 class LQRController
 {
