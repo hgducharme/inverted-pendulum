@@ -1,13 +1,16 @@
-#define ENCODER_OPTIMIZE_INTERRUPTS
+#ifndef UNIT_TEST
 #include <Arduino.h>
+#endif
+
+#define ENCODER_OPTIMIZE_INTERRUPTS
 #include <Encoder.h>
 #include <math.h>
-#include "LQRController.hpp"
-#include "StateVector.hpp"
-#include "DrokL928.hpp"
-#include "Cart.hpp"
-#include "EncoderWrapper.hpp"
-#include "StateUpdater.hpp"
+#include <LQRController.hpp>
+#include <StateVector.hpp>
+#include <DrokL928.hpp>
+#include <Cart.hpp>
+#include <EncoderWrapper.hpp>
+#include <StateUpdater.hpp>
 #include "IMotorController.hpp"
 
 namespace pins {
@@ -44,6 +47,7 @@ StateVector state(0, 0, 5, 6);
 StateVector previousState(0, 0, 0, PI);
 StateUpdater stateCalculator(cartEncoder, pendulumEncoder, constants::IDLER_PULLEY_RADIUS, constants::LOOP_RATE);
 
+#ifndef UNIT_TEST
 void setup()
 {
   Serial.begin(9400);
@@ -68,3 +72,4 @@ void loop()
     stateCalculator.archiveCurrentState(state, previousState);
   }
 }
+#endif
