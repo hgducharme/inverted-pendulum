@@ -1,4 +1,4 @@
-#include "EncoderWrapper.hpp"
+#include <EncoderWrapper.hpp>
 
 EncoderWrapper::EncoderWrapper(Encoder &e, double PPR) : encoder(e), pulsePerRevolution(PPR) {}; 
 
