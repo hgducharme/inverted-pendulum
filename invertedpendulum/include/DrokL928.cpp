@@ -1,4 +1,8 @@
-#include "DrokL928.hpp"
+#include <DrokL928.hpp>
+
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#endif
 
 DrokL928::DrokL928(int _IN1, int _IN2, int _ENA) : 
     motorIN1(_IN1), motorIN2(_IN2), motorENA(_ENA) {

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Arduino.h>
-#include "IMotorController.hpp"
+#include <IMotorController.hpp>
 
 class DrokL928 : public IMotorController {
     private:
