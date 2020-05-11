@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IMotorController.hpp"
-#include <Arduino.h>
 
 class Cart {
     IMotorController &motorController;
@@ -12,4 +11,7 @@ class Cart {
         void moveRight(double dutyCyclePWM);
         void brake();
         void dispatch(double controlInput);
+        
+    private:
+        long map(long x, long in_min, long in_max, long out_min, long out_max);
 };

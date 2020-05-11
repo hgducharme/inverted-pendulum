@@ -1,4 +1,5 @@
-#include "Cart.hpp"
+#include <Cart.hpp>
+#include <math.h>
 
 Cart::Cart(IMotorController &m) : motorController(m) {};
 
@@ -16,7 +17,7 @@ void Cart::brake() {
 
 void Cart::dispatch(double controlInput) {
     // NOTE: A PWM value of 35 is essentially the lowest value to start moving the cart due to friction
-    double mappedInput = map(abs(controlInput), 0, 1000, 20, 255);
+    double mappedInput = map(fabs(controlInput), 0, 1000, 20, 255);
 
     if (mappedInput > 255)
     {
@@ -35,4 +36,9 @@ void Cart::dispatch(double controlInput) {
     {
         brake();
     }
+}
+
+long Cart::map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
