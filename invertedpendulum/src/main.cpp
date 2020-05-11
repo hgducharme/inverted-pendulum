@@ -34,10 +34,10 @@ namespace constants {
 unsigned long previousMilliseconds = 0;
 
 // Initialize hardware layer objects
-Encoder c(pins::cartEncoderPhaseA, pins::cartEncoderPhaseB);
-Encoder p(pins::pendulumEncoderPhaseA, pins::pendulumEncoderPhaseB);
-EncoderWrapper cartEncoder(c, constants::ENCODER_PPR);
-EncoderWrapper pendulumEncoder(p, constants::ENCODER_PPR);
+Encoder cEncoder(pins::cartEncoderPhaseA, pins::cartEncoderPhaseB);
+Encoder pEncoder(pins::pendulumEncoderPhaseA, pins::pendulumEncoderPhaseB);
+EncoderWrapper cartEncoder(cEncoder, constants::ENCODER_PPR);
+EncoderWrapper pendulumEncoder(pEncoder, constants::ENCODER_PPR);
 IMotorController *motorController = (IMotorController*)new DrokL928(pins::motorIN1, pins::motorIN2, pins::motorENA);
 
 // Initialize application layer objects
