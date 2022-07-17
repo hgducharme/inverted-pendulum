@@ -41,8 +41,6 @@
 
 # Timeline
 
-This project might be trivial to some people, but it sure as hell wasn't for me, so I'm going to document my experience and lessons learned below.
-
 1. I first started this project by buying a printer off some dude in my town for $15. I had zero experience with Arduinos and electronics at this time.
 
 2. I took apart the printer and extracted the printer carriage assembly and was able to create a small setup that would suffice for getting this inverted pendulum project off the ground.
