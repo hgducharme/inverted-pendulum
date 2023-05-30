@@ -41,7 +41,7 @@ void loop()
   long pendulumEncoderCount = pendulumEncoder.read();
   double controlInput; // voltage
 
-  // Send values to python every n milliseconds
+  // Run the calculations every TIMEFRAME seconds
   if ((currentMilliseconds - previousMilliseconds) >= TIMEFRAME)
   {
 
